@@ -28,7 +28,7 @@ public class MsTableTranslator<T> : TableTranslator<T>, IMsTableTranslator<T>
         return WithTable(table) as MsTableTranslator<T>;
     }
 
-    public static MsTableTranslator<T> Make(string command, Action<IMsTableTranslator<T>> inner)
+    public static MsTableTranslator<T> Make(string command, Action<MsTableTranslator<T>> inner)
     {
         var obj = new MsTableTranslator<T>(command);
         inner?.Invoke(obj);

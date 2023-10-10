@@ -4,7 +4,8 @@ using QueryBuilder.Ms.Translators;
 
 namespace QueryBuilder.Ms;
 
-public interface IMsQueryBuilder : IQueryBuilder
+//TODO: Как использовать общий билдер и нужно ли его использовать
+public interface IMsQueryBuilder //: IQueryBuilder
 {
     IMsDeleteQueryBuilder<T> Delete<T>();
     IMsDeleteQueryBuilder<T> Delete<T>(Action<IMsTableTranslator<T>> inner);

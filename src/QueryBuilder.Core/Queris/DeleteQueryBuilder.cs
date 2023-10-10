@@ -5,6 +5,7 @@ namespace QueryBuilder.Core.Queris;
 public interface IDeleteQueryBuilder<T>
 {
     IDeleteQueryBuilder<T> Delete();
+    IDeleteQueryBuilder<T> Where(Action<IWhereTranslator<T>> where);
 }
 
 public class DeleteQueryBuilder<T> : QueryBuilderCore, IDeleteQueryBuilder<T>
@@ -22,8 +23,19 @@ public class DeleteQueryBuilder<T> : QueryBuilderCore, IDeleteQueryBuilder<T>
         return this;
     }
 
+    public DeleteQueryBuilder<T> Where(Action<WhereTranslator<T>> inner)
+    {
+        WhereTranslator<T>.Make(inner).Run(Source);
+        return this;
+    }
+
     IDeleteQueryBuilder<T> IDeleteQueryBuilder<T>.Delete()
     {
         return Delete();
+    }
+
+    IDeleteQueryBuilder<T> IDeleteQueryBuilder<T>.Where(Action<IWhereTranslator<T>> where)
+    {
+        return Where(where);
     }
 }

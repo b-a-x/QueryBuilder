@@ -9,7 +9,7 @@ public interface IMsDeleteQueryBuilder<T>
     IMsDeleteQueryBuilder<T> Delete(Action<IMsTableTranslator<T>> inner);
 }
 
-public class MsDeleteQueryBuilder<T> : Core.QueryBuilder, IMsDeleteQueryBuilder<T>
+public class MsDeleteQueryBuilder<T> : QueryBuilderCore, IMsDeleteQueryBuilder<T>
 {
     public MsDeleteQueryBuilder(QueryBuilderSource source) : base(source) { }
 
@@ -18,7 +18,7 @@ public class MsDeleteQueryBuilder<T> : Core.QueryBuilder, IMsDeleteQueryBuilder<
         return new MsDeleteQueryBuilder<T>(source);
     }
 
-    public MsDeleteQueryBuilder<T> Delete(Action<IMsTableTranslator<T>> inner)
+    public MsDeleteQueryBuilder<T> Delete(Action<MsTableTranslator<T>> inner)
     {
         MsTableTranslator<T>.Make("delete", inner).Run(Source);
         return this;
