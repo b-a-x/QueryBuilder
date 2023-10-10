@@ -11,8 +11,10 @@ namespace QueryBuilder.Core
 
     public partial class QueryBuilder : IQueryBuilder
     {
-        public partial IDeleteQueryBuilder<T> Delete<T>();
+        IDeleteQueryBuilder<T> IQueryBuilder.Delete<T>() =>
+            Delete<T>();
 
-        public partial IDeleteQueryBuilder<T> Delete<T>(Action<ITableTranslator<T>> inner);
+        IDeleteQueryBuilder<T> IQueryBuilder.Delete<T>(Action<ITableTranslator<T>> inner) => 
+            Delete<T>(inner);
     }
 }
