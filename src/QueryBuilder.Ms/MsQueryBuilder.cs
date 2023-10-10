@@ -1,5 +1,4 @@
-﻿using QueryBuilder.Core;
-using QueryBuilder.Ms.Queris;
+﻿using QueryBuilder.Ms.Queris;
 using QueryBuilder.Ms.Translators;
 
 namespace QueryBuilder.Ms;
@@ -13,6 +12,9 @@ public interface IMsQueryBuilder //: IQueryBuilder
 
 public partial class MsQueryBuilder : IMsQueryBuilder
 {
-    public partial IMsDeleteQueryBuilder<T> Delete<T>();
-    public partial IMsDeleteQueryBuilder<T> Delete<T>(Action<IMsTableTranslator<T>> inner);
+    IMsDeleteQueryBuilder<T> IMsQueryBuilder.Delete<T>() =>
+        Delete<T>();
+
+    IMsDeleteQueryBuilder<T> IMsQueryBuilder.Delete<T>(Action<IMsTableTranslator<T>> inner) =>
+        Delete<T>(inner);
 }
