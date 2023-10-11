@@ -2,9 +2,9 @@
 
 namespace QueryBuilder.Core.Helpers;
 
-internal static class CommonExpression
+public static class CommonExpression
 {
-    internal static string GetColumnName<TDtoType, TProperty>(Expression<Func<TDtoType, TProperty>> columnExpression)
+    public static string GetColumnName<TDtoType, TProperty>(Expression<Func<TDtoType, TProperty>> columnExpression)
     {
         var memberExpression = columnExpression.Body as MemberExpression;
 
@@ -21,7 +21,7 @@ internal static class CommonExpression
         return memberExpression.Member.Name;
     }
 
-    internal static object GetColumnValue<TDtoType, TProperty>(Expression<Func<TDtoType, TProperty>> columnExpression)
+    public static object GetColumnValue<TDtoType, TProperty>(Expression<Func<TDtoType, TProperty>> columnExpression)
     {
         Expression memberExpression = columnExpression.Body as MemberExpression;
 

@@ -4,7 +4,7 @@ using QueryBuilder.Ms.Translators;
 
 namespace QueryBuilder.Ms;
 
-public partial class MsQueryBuilder : QueryBuilderCore
+public partial class MsQueryBuilder : Core.QueryBuilder
 {
     protected MsQueryBuilder(QueryBuilderSource source) : base(source) { }
 
