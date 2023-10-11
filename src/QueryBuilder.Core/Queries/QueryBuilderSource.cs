@@ -1,7 +1,7 @@
 ﻿using QueryBuilder.Core.Helpers;
 using System.Text;
 
-namespace QueryBuilder.Core.Queris;
+namespace QueryBuilder.Core.Queries;
 
 public class QueryBuilderSource
 {

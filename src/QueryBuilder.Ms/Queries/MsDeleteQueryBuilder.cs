@@ -1,7 +1,7 @@
-﻿using QueryBuilder.Core.Queris;
+﻿using QueryBuilder.Core.Queries;
 using QueryBuilder.Ms.Translators;
 
-namespace QueryBuilder.Ms.Queris;
+namespace QueryBuilder.Ms.Queries;
 
 public interface IMsDeleteQueryBuilder<T>
 {

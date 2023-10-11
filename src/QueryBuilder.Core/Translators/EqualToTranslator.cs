@@ -1,4 +1,4 @@
-﻿using QueryBuilder.Core.Queris;
+﻿using QueryBuilder.Core.Queries;
 using System.Diagnostics.CodeAnalysis;
 
 namespace QueryBuilder.Core.Translators;

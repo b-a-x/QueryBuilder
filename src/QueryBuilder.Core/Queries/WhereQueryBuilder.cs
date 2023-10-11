@@ -1,4 +1,4 @@
-﻿namespace QueryBuilder.Core.Queris;
+﻿namespace QueryBuilder.Core.Queries;
 
 public interface IWhereQueryBuilder<T> { }
 

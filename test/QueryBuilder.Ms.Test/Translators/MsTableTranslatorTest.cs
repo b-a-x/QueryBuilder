@@ -1,4 +1,4 @@
-﻿using QueryBuilder.Core.Queris;
+﻿using QueryBuilder.Core.Queries;
 using QueryBuilder.Ms.Translators;
 using QueryBuilder.Test;
 

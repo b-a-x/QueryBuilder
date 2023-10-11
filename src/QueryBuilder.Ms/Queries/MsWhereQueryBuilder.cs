@@ -1,10 +1,10 @@
-﻿using QueryBuilder.Core.Queris;
+﻿using QueryBuilder.Core.Queries;
 using QueryBuilder.Core.Translators;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using QueryBuilder.Core.Helpers;
 
-namespace QueryBuilder.Ms.Queris;
+namespace QueryBuilder.Ms.Queries;
 
 public interface IMsWhereQueryBuilder<T> : IWhereQueryBuilder<T>
 {

@@ -1,5 +1,5 @@
-﻿using QueryBuilder.Core.Queris;
-using QueryBuilder.Ms.Queris;
+﻿using QueryBuilder.Core.Queries;
+using QueryBuilder.Ms.Queries;
 using QueryBuilder.Ms.Translators;
 
 namespace QueryBuilder.Ms;
