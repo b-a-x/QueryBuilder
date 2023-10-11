@@ -10,4 +10,8 @@
     <ProjectReference Include="..\QueryBuilder.Core\QueryBuilder.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Translators\" />
+  </ItemGroup>
+
 </Project>
