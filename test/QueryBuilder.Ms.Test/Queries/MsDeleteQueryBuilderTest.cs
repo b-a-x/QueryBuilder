@@ -24,7 +24,7 @@ public class MsDeleteQueryBuilderTest
         Assert.Equal(expected, source.Query.ToString());
     }
 
-    /*[Theory]
+    [Theory]
     [InlineData("\r\ndelete dbo.TestClass\r\nwhere Id = @0 and Name = @1 and Age = @2 and Timespan = @3")]
     public void DeleteWhere_BuildSql(string expected)
     {
@@ -35,6 +35,6 @@ public class MsDeleteQueryBuilderTest
                         .EqualTo(y => y.Name, null).And()
                         .EqualTo(y => y.Age, 10).And()
                         .EqualTo(y => y.Timespan, new DateTime(2023, 04, 23)));
-        Assert.Equal(expected, source.ToString());
-    }*/
+        Assert.Equal(expected, source.Query.ToString());
+    }
 }

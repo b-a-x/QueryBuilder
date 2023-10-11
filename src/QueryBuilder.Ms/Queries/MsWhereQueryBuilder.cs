@@ -41,13 +41,9 @@ public class MsWhereQueryBuilder<T> : WhereQueryBuilder<T>, IMsWhereQueryBuilder
         return obj;
     }
 
-    IMsWhereQueryBuilder<T> IMsWhereQueryBuilder<T>.EqualTo<TField>(Expression<Func<T, TField>> column, TField value)
-    {
-        return EqualTo(column, value);
-    }
+    IMsWhereQueryBuilder<T> IMsWhereQueryBuilder<T>.EqualTo<TField>(Expression<Func<T, TField>> column, TField value) =>
+       EqualTo(column, value);
 
-    IMsWhereQueryBuilder<T> IMsWhereQueryBuilder<T>.And()
-    {
-        return And();
-    }
+    IMsWhereQueryBuilder<T> IMsWhereQueryBuilder<T>.And() =>
+       And();
 }

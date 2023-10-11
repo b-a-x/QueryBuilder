@@ -1,20 +1,15 @@
 ﻿using QueryBuilder.Core;
 using QueryBuilder.Ms.Queries;
-using QueryBuilder.Ms.Translators;
 
 namespace QueryBuilder.Ms;
 
 public interface IMsQueryBuilder : IQueryBuilder
 {
-    IMsDeleteQueryBuilder<T> Delete<T>();
-    IMsDeleteQueryBuilder<T> Delete<T>(Action<IMsTableTranslator<T>> inner);
+    IMsDeleteQueryBuilder<T> Delete<T>(string schema = null, string table = null, string alias = null);
 }
 
 public partial class MsQueryBuilder : IMsQueryBuilder
 {
-    IMsDeleteQueryBuilder<T> IMsQueryBuilder.Delete<T>() =>
-        Delete<T>();
-
-    IMsDeleteQueryBuilder<T> IMsQueryBuilder.Delete<T>(Action<IMsTableTranslator<T>> inner) =>
-        Delete<T>(inner);
+    IMsDeleteQueryBuilder<T> IMsQueryBuilder.Delete<T>(string schema = null, string table = null, string alias = null) =>
+        Delete<T>(schema, table, alias);
 }

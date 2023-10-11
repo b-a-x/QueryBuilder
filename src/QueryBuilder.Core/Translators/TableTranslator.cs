@@ -2,79 +2,37 @@
 
 namespace QueryBuilder.Core.Translators;
 
-public interface ITableTranslator<T>
+public class TableTranslator<T> : CommandTranslator
 {
-    ITableTranslator<T> WithTable(string table);
-    ITableTranslator<T> WithSchema(string schema);
-    ITableTranslator<T> WithAlias(string alias);
-}
-
-public class TableTranslator<T> : CommandTranslator , ITableTranslator<T>
-{
-    private string _alias;
-    private string _table;
-    private string _schema;
-    public TableTranslator(string command, string schema) : base(command) 
+    private readonly string _alias;
+    private readonly string _table;
+    private readonly string _schema;
+    public TableTranslator(string command, string schema, string table, string alias) : base(command) 
     { 
-        _schema = schema; 
+        _schema = schema;
+        _table = string.IsNullOrWhiteSpace(table) ? typeof(T).Name : table;
+        _alias = alias;
     }
 
     public override void Run(QueryBuilderSource source)
     {
-        var table = string.IsNullOrWhiteSpace(_table) ? typeof(T).Name : _table;
         source.Query.Append("\r\n");
         if (string.IsNullOrEmpty(_alias) == false)
         {
             if (string.IsNullOrEmpty(_schema))
-                source.Query.Append(command).Append(" ").Append(table).Append(" as ").Append(_alias);
+                source.Query.Append(command).Append(" ").Append(_table).Append(" as ").Append(_alias);
             else
-                source.Query.Append(command).Append(" ").Append(_schema).Append(".").Append(table).Append(" as ").Append(_alias);
+                source.Query.Append(command).Append(" ").Append(_schema).Append(".").Append(_table).Append(" as ").Append(_alias);
         }
         else
         {
             if(string.IsNullOrEmpty(_schema))
-                source.Query.Append(command).Append(" ").Append(table);
+                source.Query.Append(command).Append(" ").Append(_table);
             else
-                source.Query.Append(command).Append(" ").Append(_schema).Append(".").Append(table);
+                source.Query.Append(command).Append(" ").Append(_schema).Append(".").Append(_table);
         }
     }
 
-    public TableTranslator<T> WithTable(string table)
-    {
-        _table = table;
-        return this;
-    }
-
-    public TableTranslator<T> WithSchema(string schema)
-    {
-        _schema = schema;
-        return this;
-    }
-    public TableTranslator<T> WithAlias(string alias)
-    {
-        _alias = alias;
-        return this;
-    }
-
-    ITableTranslator<T> ITableTranslator<T>.WithTable(string table)
-    {
-        return WithTable(table);
-    }
-
-    ITableTranslator<T> ITableTranslator<T>.WithSchema(string schema)
-    {
-        return WithSchema(schema);
-    }
-
-    ITableTranslator<T> ITableTranslator<T>.WithAlias(string alias)
-    {
-        return WithAlias(alias);
-    }
-
-    public static TableTranslator<T> Make(string command, Action<TableTranslator<T>> inner)
-    {
-        var obj = new TableTranslator<T>(command, "");
-        inner?.Invoke(obj);
-        return obj;
-    }
+    public static TableTranslator<T> Make(string command, string schema, string table, string alias) => 
+        new TableTranslator<T>(command, schema, table, alias);
 }
