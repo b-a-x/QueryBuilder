@@ -2,7 +2,7 @@
 
 namespace QueryBuilder.Core.Translators;
 
-public class TableTranslator<T> : CommandTranslator
+public class TableTranslator : CommandTranslator
 {
     private readonly string _alias;
     private readonly string _table;
@@ -10,7 +10,7 @@ public class TableTranslator<T> : CommandTranslator
     public TableTranslator(string command, string schema, string table, string alias) : base(command) 
     { 
         _schema = schema;
-        _table = string.IsNullOrWhiteSpace(table) ? typeof(T).Name : table;
+        _table = table;
         _alias = alias;
     }
 
@@ -33,6 +33,6 @@ public class TableTranslator<T> : CommandTranslator
         }
     }
 
-    public static TableTranslator<T> Make(string command, string schema, string table, string alias) => 
-        new TableTranslator<T>(command, schema, table, alias);
+    public static TableTranslator Make(string command, string schema, string table, string alias) => 
+        new TableTranslator(command, schema, table, alias);
 }

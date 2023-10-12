@@ -1,6 +1,5 @@
 ﻿using QueryBuilder.Core.Queries;
 using QueryBuilder.Ms.Queries;
-using QueryBuilder.Test;
 
 namespace QueryBuilder.Ms.Test.Queris;
 

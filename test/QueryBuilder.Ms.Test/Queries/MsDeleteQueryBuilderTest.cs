@@ -1,13 +1,12 @@
 ﻿using QueryBuilder.Core.Queries;
 using QueryBuilder.Ms.Queries;
-using QueryBuilder.Test;
 
 namespace QueryBuilder.Ms.Test.Queris;
 
 public class MsDeleteQueryBuilderTest
 {
     [Theory]
-    [InlineData("\r\ndelete dbo.TestClass")]
+    [InlineData("\r\ndelete dbo.TestClass as tc")]
     public void Delete_BuildSql(string expected)
     {
         var source = new QueryBuilderSource();
@@ -16,7 +15,7 @@ public class MsDeleteQueryBuilderTest
     }
 
     [Theory]
-    [InlineData("\r\ndelete dbo.TestClass\r\ndelete dbo.TestClass")]
+    [InlineData("\r\ndelete dbo.TestClass as tc\r\ndelete dbo.TestClass as tc")]
     public void DoubleDelete_BuildSql(string expected)
     {
         var source = new QueryBuilderSource();
@@ -25,7 +24,7 @@ public class MsDeleteQueryBuilderTest
     }
 
     [Theory]
-    [InlineData("\r\ndelete dbo.TestClass\r\nwhere Id = @0 and Name = @1 and Age = @2 and Timespan = @3")]
+    [InlineData("\r\ndelete dbo.TestClass as tc\r\nwhere Id = @0 and Name = @1 and Age = @2 and Timespan = @3")]
     public void DeleteWhere_BuildSql(string expected)
     {
         var source = new QueryBuilderSource();

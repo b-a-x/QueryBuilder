@@ -5,7 +5,7 @@ namespace QueryBuilder.Core.Translators;
 public class CommandTranslator : Translator
 {
     protected readonly string command;
-    internal CommandTranslator(string command)
+    public CommandTranslator(string command)
     {
         this.command = command;
     }

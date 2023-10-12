@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\QueryBuilder.Core\QueryBuilder.Core.csproj" />
-    <ProjectReference Include="..\QueryBuilder.Test\QueryBuilder.Test.csproj" />
   </ItemGroup>
 
   <ItemGroup>
