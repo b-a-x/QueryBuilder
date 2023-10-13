@@ -3,7 +3,7 @@ using QueryBuilder.Ms.Queries;
 
 namespace QueryBuilder.Ms.Test.Queris;
 
-public class MsWhereQueryBuilderTest
+public class MsWhereBuilderTest
 {
     [Theory]
     [InlineData("\r\nwhere Name = @0 and ")]
