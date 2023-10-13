@@ -1,4 +1,4 @@
-﻿using QueryBuilder.Ms.Helpers;
+﻿using QueryBuilder.Core.Helpers;
 
 namespace QueryBuilder.Ms.Test.Queries;
 
@@ -15,10 +15,11 @@ public class MsSelectQueryBuilderTest
         //Assert.Equal(expected, source.Query.ToString());
     }
 
-    private static void TestMethod<T>() where T : IMsTableTranslator
+    private static void TestMethod<T>() where T : ITableBuilder
     {
-        var schema = T.Schema;
-        var table = T.Table;
-        var alias = T.Alias;
+        var table = T.GetTable();
+        var schema = table.Schema;
+        var tableName = table.TableName;
+        var alias = table.Alias;
     }
 }

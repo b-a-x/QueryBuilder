@@ -1,4 +1,5 @@
-﻿using QueryBuilder.Core.Queries;
+﻿using QueryBuilder.Core.Helpers;
+using QueryBuilder.Core.Queries;
 using QueryBuilder.Core.Translators;
 
 namespace QueryBuilder.Core.Test.Translators;
@@ -10,7 +11,7 @@ public class TableTranslatorTest
     public void Table_Build(string expected)
     {
         var source = new QueryBuilderSource();
-        TableTranslator.Make("test", "test", "MoreTestClass", null).Run(source);
+        TableTranslator.Make("test", new TableBuilder("test", "MoreTestClass", null)).Run(source);
         Assert.Equal(expected, source.Query.ToString());
     }
 
@@ -19,7 +20,7 @@ public class TableTranslatorTest
     public void Table_BuildTableAndSchemaAndAlias(string expected)
     {
         var source = new QueryBuilderSource();
-        TableTranslator.Make("test", "test", "TestClass", "tc").Run(source);
+        TableTranslator.Make("test", new TableBuilder("test", "TestClass", "tc")).Run(source);
         Assert.Equal(expected, source.Query.ToString());
     }
 }

@@ -1,18 +1,18 @@
-﻿using QueryBuilder.Core.Queries;
+﻿using QueryBuilder.Core.Helpers;
+using QueryBuilder.Core.Queries;
 using QueryBuilder.Core.Translators;
-using QueryBuilder.Ms.Helpers;
 
 namespace QueryBuilder.Ms.Queries;
 
 public interface IMsDeleteQueryBuilder<T>
-    where T : IMsTableTranslator
+    where T : ITableBuilder
 {
     IMsDeleteQueryBuilder<T> Delete();
     IMsDeleteQueryBuilder<T> Where(Action<IMsWhereQueryBuilder<T>> inner);
 }
 
 public class MsDeleteQueryBuilder<T> : QueryBuilderCore, IMsDeleteQueryBuilder<T>
-    where T : IMsTableTranslator
+    where T : ITableBuilder
 {
     public MsDeleteQueryBuilder(QueryBuilderSource source) : base(source) { }
 
@@ -21,7 +21,7 @@ public class MsDeleteQueryBuilder<T> : QueryBuilderCore, IMsDeleteQueryBuilder<T
 
     public MsDeleteQueryBuilder<T> Delete()
     {
-        MsTableTranslator<T>.Make("delete").Run(Source);
+        TableTranslator<T>.Make("delete").Run(Source);
         return this;
     }
 
