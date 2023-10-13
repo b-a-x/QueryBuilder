@@ -8,7 +8,7 @@ public interface IMsDeleteQueryBuilder<T>
     where T : ITableBuilder
 {
     IMsDeleteQueryBuilder<T> Delete();
-    IMsDeleteQueryBuilder<T> Where(Action<IMsWhereQueryBuilder<T>> inner);
+    IMsDeleteQueryBuilder<T> Where(Action<IMsWhereBuilder<T>> inner);
 }
 
 public class MsDeleteQueryBuilder<T> : QueryBuilderCore, IMsDeleteQueryBuilder<T>
@@ -25,15 +25,15 @@ public class MsDeleteQueryBuilder<T> : QueryBuilderCore, IMsDeleteQueryBuilder<T
         return this;
     }
 
-    public MsDeleteQueryBuilder<T> Where(Action<IMsWhereQueryBuilder<T>> inner)
+    public MsDeleteQueryBuilder<T> Where(Action<IMsWhereBuilder<T>> inner)
     {
-        MsWhereQueryBuilder<T>.Make(Source, inner);
+        MsWhereBuilder<T>.Make(Source, inner);
         return this;
     }
 
     IMsDeleteQueryBuilder<T> IMsDeleteQueryBuilder<T>.Delete() => 
         Delete();
 
-    IMsDeleteQueryBuilder<T> IMsDeleteQueryBuilder<T>.Where(Action<IMsWhereQueryBuilder<T>> inner) => 
+    IMsDeleteQueryBuilder<T> IMsDeleteQueryBuilder<T>.Where(Action<IMsWhereBuilder<T>> inner) => 
         Where(inner);
 }

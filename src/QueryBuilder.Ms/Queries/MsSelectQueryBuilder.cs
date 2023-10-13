@@ -5,11 +5,13 @@ using QueryBuilder.Core.Translators;
 namespace QueryBuilder.Ms.Queries;
 
 public interface IMsSelectQueryBuilder<T>
+    where T : ITableBuilder
 {
     IMsSelectQueryBuilder<T> Select(Action<IMsSelectBuilder<T>> inner);
 }
 
 public class MsSelectQueryBuilder<T> : QueryBuilderCore, IMsSelectQueryBuilder<T>
+    where T : ITableBuilder
 {
     public MsSelectQueryBuilder(QueryBuilderSource source) : base(source) {}
 
@@ -19,22 +21,24 @@ public class MsSelectQueryBuilder<T> : QueryBuilderCore, IMsSelectQueryBuilder<T
         return this;
     }
 
+    public MsSelectQueryBuilder<T> Select(Action<MsSelectBuilder<T>> inner)
+    {
+        Select();
+        MsSelectBuilder<T>.Make(Source, inner);
+        return From();
+    }
+
     public MsSelectQueryBuilder<T> From()
     {
-        CommandTranslator.Make("delete").Run(Source);
+        TableTranslator<T>.Make("from").Run(Source);
         return this;
     }
 
-    public static MsSelectQueryBuilder<T> Make(QueryBuilderSource source, Action<MsSelectQueryBuilder<T>> inner)
+    public static MsSelectQueryBuilder<T> Make(QueryBuilderSource source)
     {
-        var obj = new MsSelectQueryBuilder<T>(source);
-        obj.Select();
-        inner?.Invoke(obj);
-        return obj;
+        return new MsSelectQueryBuilder<T>(source);
     }
 
-    public IMsSelectQueryBuilder<T> Select(Action<IMsSelectBuilder<T>> inner)
-    {
-        throw new NotImplementedException();
-    }
+    IMsSelectQueryBuilder<T> IMsSelectQueryBuilder<T>.Select(Action<IMsSelectBuilder<T>> inner)
+        => Select(inner);
 }

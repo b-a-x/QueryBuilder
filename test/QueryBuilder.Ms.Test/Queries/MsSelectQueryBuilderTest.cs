@@ -1,25 +1,16 @@
-﻿using QueryBuilder.Core.Helpers;
+﻿using QueryBuilder.Core.Queries;
+using QueryBuilder.Ms.Queries;
 
 namespace QueryBuilder.Ms.Test.Queries;
 
 public class MsSelectQueryBuilderTest
 {
     [Theory]
-    [InlineData("\r\ndelete dbo.TestClass")]
+    [InlineData("\r\nselect * \r\nfrom dbo.TestClass as tc")]
     public void Select_BuildSql(string expected)
     {
-        TestMethod<TestClass>();
-        TestMethod<MoreTestClass>();
-        //var source = new QueryBuilderSource();
-        //new MsSelectQueryBuilder<TestClass>(source).Select(null).From();
-        //Assert.Equal(expected, source.Query.ToString());
-    }
-
-    private static void TestMethod<T>() where T : ITableBuilder
-    {
-        var table = T.GetTable();
-        var schema = table.Schema;
-        var tableName = table.TableName;
-        var alias = table.Alias;
+        var source = new QueryBuilderSource();
+        new MsSelectQueryBuilder<TestClass>(source).Select(x => x.All());
+        Assert.Equal(expected, source.Query.ToString());
     }
 }

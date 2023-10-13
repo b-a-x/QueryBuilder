@@ -10,7 +10,7 @@ public class MsWhereQueryBuilderTest
     public void Where_BuildSql(string expected)
     {
         var source = new QueryBuilderSource();
-        new MsWhereQueryBuilder<TestClass>(source).Where().EqualTo(x => x.Name, "test").And();
+        new MsWhereBuilder<TestClass>(source).Where().EqualTo(x => x.Name, "test").And();
         Assert.Equal(expected, source.Query.ToString());
     }
 }
