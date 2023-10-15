@@ -25,7 +25,7 @@ public class MsDeleteQueryBuilder<T> : QueryBuilderCore, IMsDeleteQueryBuilder<T
         return this;
     }
 
-    public MsDeleteQueryBuilder<T> Where(Action<IMsWhereBuilder<T>> inner)
+    public MsDeleteQueryBuilder<T> Where(Action<MsWhereBuilder<T>> inner)
     {
         MsWhereBuilder<T>.Make(Source, inner);
         return this;
