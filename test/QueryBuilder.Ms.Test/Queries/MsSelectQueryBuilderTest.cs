@@ -36,4 +36,15 @@ public class MsSelectQueryBuilderTest
                         .EqualTo(y => y.Timespan, new DateTime(2023, 04, 23)));
         Assert.Equal(expected, source.Query.ToString());
     }
+
+    [Theory]
+    [InlineData("\r\nselect * \r\nfrom dbo.TestClass as tc")]
+    public void SelectJoin_BuildSql(string expected)
+    {
+        var source = new QueryBuilderSource();
+        new MsSelectQueryBuilder<TestClass, MoreTestClass>(source)
+            .Select(x => x.All(), y => y.All())
+            .Join(null);
+        Assert.Equal(expected, source.Query.ToString());
+    }
 }

@@ -6,8 +6,13 @@ namespace QueryBuilder.Ms;
 
 public interface IMsQueryBuilder : IQueryBuilder
 {
-    IMsDeleteQueryBuilder<T> Delete<T>() where T : ITableBuilder;
-    IMsSelectQueryBuilder<T> Select<T>(Action<IMsSelectBuilder<T>> inner) where T : ITableBuilder;
+    IMsDeleteQueryBuilder<T> Delete<T>() 
+        where T : ITableBuilder;
+    IMsSelectQueryBuilder<T> Select<T>(Action<IMsSelectBuilder<T>> inner) 
+        where T : ITableBuilder;
+    IMsSelectQueryBuilder<TOne, TTwo> Select<TOne, TTwo>(Action<IMsSelectBuilder<TOne>> one, Action<IMsSelectBuilder<TTwo>> two) 
+        where TOne : ITableBuilder
+        where TTwo : ITableBuilder;
 }
 
 public partial class MsQueryBuilder : IMsQueryBuilder
@@ -17,4 +22,9 @@ public partial class MsQueryBuilder : IMsQueryBuilder
 
     IMsDeleteQueryBuilder<T> IMsQueryBuilder.Delete<T>()
         => Delete<T>();
+
+    IMsSelectQueryBuilder<TOne, TTwo> IMsQueryBuilder.Select<TOne, TTwo>(Action<IMsSelectBuilder<TOne>> one, Action<IMsSelectBuilder<TTwo>> two)
+    {
+        throw new NotImplementedException();
+    }
 }
