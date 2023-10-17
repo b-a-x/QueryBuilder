@@ -17,13 +17,11 @@ public class AllTranslator : Translator
         if (string.IsNullOrEmpty(_table.TableName))
             throw new Exception("not used interface");
 
+        if (source.Query[source.Query.Length - 7] != 's' && source.Query[source.Query.Length - 2] != 't')
+            source.Query.Append(",");
+
         source.Query.Append(_table.Alias).Append(".* ");
     }
-
-    /*public static AllTranslator Make()
-    {
-        return new AllTranslator();
-    }*/
 }
 
 public class AllTranslator<T> : AllTranslator

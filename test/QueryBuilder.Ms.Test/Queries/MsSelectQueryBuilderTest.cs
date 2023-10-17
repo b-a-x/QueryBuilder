@@ -38,7 +38,7 @@ public class MsSelectQueryBuilderTest
     }
 
     [Theory]
-    [InlineData("\r\nselect tc.*, mtc.* \r\nfrom dbo.TestClass as tc\r\njoin dbo.MoreTestClass as mtc on tc.Id = mtc.Id")]
+    [InlineData("\r\nselect tc.* ,mtc.* \r\nfrom dbo.TestClass as tc\r\njoin dbo.MoreTestClass as mtc on tc.Id = mtc.Id")]
     public void SelectJoin_BuildSql(string expected)
     {
         var source = new QueryBuilderSource();
