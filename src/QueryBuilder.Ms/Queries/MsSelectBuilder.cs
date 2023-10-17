@@ -19,7 +19,7 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
 
     public MsSelectBuilder<T> All()
     {
-        AllTranslator.Make().Run(Source);
+        AllTranslator<T>.Make().Run(Source);
         return this;
     }
 
