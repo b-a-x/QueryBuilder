@@ -5,7 +5,7 @@ namespace QueryBuilder.Core.Translators;
 
 public class TableTranslator : CommandTranslator
 {
-    private readonly TableBuilder _table;
+    protected readonly TableBuilder _table;
     public TableTranslator(string command, TableBuilder table) : base(command) 
     {
         _table = table;

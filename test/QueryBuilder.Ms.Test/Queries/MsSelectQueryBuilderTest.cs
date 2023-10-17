@@ -38,13 +38,14 @@ public class MsSelectQueryBuilderTest
     }
 
     [Theory]
-    [InlineData("\r\nselect * \r\nfrom dbo.TestClass as tc")]
+    [InlineData("\r\nselect * \r\nfrom dbo.TestClass as tc\r\njoin dbo.MoreTestClass as mtc on tc.Id = mtc.Id")]
     public void SelectJoin_BuildSql(string expected)
     {
         var source = new QueryBuilderSource();
         new MsSelectQueryBuilder<TestClass, MoreTestClass>(source)
-            .Select(x => x.All(), y => y.All())
-            .Join(null);
+            .Select(x => x.All(), 
+                    y => y.All())
+            .Join(x => x.EqualTo(x => x.Id, x => x.Id));
         Assert.Equal(expected, source.Query.ToString());
     }
 }

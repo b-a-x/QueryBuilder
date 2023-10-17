@@ -85,6 +85,7 @@ public class MsSelectQueryBuilder<TOne, TTwo> : SelectQueryBuilder<TOne>, IMsSel
 
     public MsSelectQueryBuilder<TOne, TTwo> Join(Action<MsJoinBuilder<TOne, TTwo>> inner)
     {
+        MsJoinBuilder<TOne, TTwo>.Make(Source, inner);
         return this;
     }
 

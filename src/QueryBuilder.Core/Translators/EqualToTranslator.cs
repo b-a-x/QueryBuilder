@@ -25,3 +25,25 @@ public class EqualToTranslator : Translator
         return new EqualToTranslator(columnName, value);
     }
 }
+
+public class EqualTranslator : Translator
+{
+    private readonly string _columnNameLeft;
+    private readonly string _columnNameRigth;
+
+    public EqualTranslator(string columnNameLeft, string columnNameRigth)
+    {
+        _columnNameLeft = columnNameLeft;
+        _columnNameRigth = columnNameRigth;
+    }
+
+    public override void Run(QueryBuilderSource source)
+    {
+        source.Query.Append(_columnNameLeft).Append(" = ").Append(_columnNameRigth);
+    }
+
+    public static EqualTranslator Make([NotNull] string columnNameLeft, [NotNull] string columnNameRigth)
+    {
+        return new EqualTranslator(columnNameLeft, columnNameRigth);
+    }
+}
