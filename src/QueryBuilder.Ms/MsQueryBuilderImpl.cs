@@ -16,15 +16,8 @@ public partial class MsQueryBuilder : Core.QueryBuilder
         where T : ITableBuilder 
         => MsSelectQueryBuilder<T>.Make(Source).Select(inner);
 
-    public MsSelectQueryBuilder<TOne, TTwo> Select<TOne, TTwo>(Action<MsSelectBuilder<TOne>> one, Action<MsSelectBuilder<TTwo>> two)
+    public MsSelectQueryBuilder<TOne, TTwo> Select<TOne, TTwo>(Action<MsSelectBuilder<TOne, TTwo>> inner)
         where TOne : ITableBuilder
-        where TTwo : ITableBuilder
-    {
-        var builder = MsSelectQueryBuilder<TOne, TTwo>.Make(Source);
-        builder.Select();
-        MsSelectBuilder<TOne>.Make(Source, one);
-        MsSelectBuilder<TTwo>.Make(Source, two);
-        builder.From();
-        return builder;
-    }
+        where TTwo : ITableBuilder 
+        => MsSelectQueryBuilder<TOne, TTwo>.Make(Source).Select(inner);
 }

@@ -6,11 +6,11 @@ namespace QueryBuilder.Ms.Test.Queries;
 public class MsSelectQueryBuilderTest
 {
     [Theory]
-    [InlineData("\r\nselect tc.* \r\nfrom dbo.TestClass as tc")]
+    [InlineData("\r\nselect tc.* ,tc.Id as qwe \r\nfrom dbo.TestClass as tc")]
     public void Select_BuildSql(string expected)
     {
         var source = new QueryBuilderSource();
-        new MsSelectQueryBuilder<TestClass>(source).Select(x => x.All());
+        new MsSelectQueryBuilder<TestClass>(source).Select(x => x.All().Field(x => x.Id).As("qwe"));
         Assert.Equal(expected, source.Query.ToString());
     }
 

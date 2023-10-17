@@ -1,6 +1,8 @@
 ﻿using QueryBuilder.Core.Helpers;
 using QueryBuilder.Core.Queries;
 using QueryBuilder.Ms.Translators;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 
 namespace QueryBuilder.Ms.Queries;
 
@@ -8,6 +10,8 @@ public interface IMsSelectBuilder<T>
     where T : ITableBuilder
 {
     IMsSelectBuilder<T> All();
+    IMsSelectBuilder<T> Field<TField>([NotNull] Expression<Func<T, TField>> column);
+    IMsSelectBuilder<T> As(string value);
 }
 
 public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
@@ -23,6 +27,18 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
         return this;
     }
 
+    public MsSelectBuilder<T> As(string value)
+    {
+        AsTranslator.Make(value).Run(Source);
+        return this;
+    }
+
+    public MsSelectBuilder<T> Field<TField>(Expression<Func<T, TField>> column)
+    {
+        FieldTranslator<T>.Make(CommonExpression.GetColumnName(column)).Run(Source);
+        return this;
+    }
+
     public static MsSelectBuilder<T> Make(QueryBuilderSource source, Action<MsSelectBuilder<T>> inner)
     {
         var obj = new MsSelectBuilder<T>(source);
@@ -32,6 +48,12 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
 
     IMsSelectBuilder<T> IMsSelectBuilder<T>.All()
         => All();
+
+    IMsSelectBuilder<T> IMsSelectBuilder<T>.Field<TField>(Expression<Func<T, TField>> column) 
+        => Field(column);
+
+    IMsSelectBuilder<T> IMsSelectBuilder<T>.As(string value) 
+        => As(value);
 }
 
 

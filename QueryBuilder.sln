@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QueryBuilder.Ms.Test", "tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QueryBuilder.Core.Test", "test\QueryBuilder.Core.Test\QueryBuilder.Core.Test.csproj", "{1CF18990-473A-4014-AFAF-6E9BB654B9A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryBuilder.Ms.Benchmarcks", "benchmarck\QueryBuilder.Ms.Benchmarcks\QueryBuilder.Ms.Benchmarcks.csproj", "{DFBC4471-E172-470C-981E-11E34F1741C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{1CF18990-473A-4014-AFAF-6E9BB654B9A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CF18990-473A-4014-AFAF-6E9BB654B9A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CF18990-473A-4014-AFAF-6E9BB654B9A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFBC4471-E172-470C-981E-11E34F1741C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFBC4471-E172-470C-981E-11E34F1741C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFBC4471-E172-470C-981E-11E34F1741C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFBC4471-E172-470C-981E-11E34F1741C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +54,7 @@ Global
 		{85C34B38-7C84-4A9D-98D5-9D4F835DC861} = {1D48079D-2EC6-4000-8300-59F45775969A}
 		{A302AED5-6E71-4F7E-8737-72F34DC4FA84} = {7D5957B2-851A-4E4B-8EE3-C1CB11503CB6}
 		{1CF18990-473A-4014-AFAF-6E9BB654B9A8} = {7D5957B2-851A-4E4B-8EE3-C1CB11503CB6}
+		{DFBC4471-E172-470C-981E-11E34F1741C2} = {786DC4E8-0D7C-4DF0-BC33-BD1B75ED3C5E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B8DB90D1-3AEF-4737-86CC-F21E896F5E2A}
