@@ -24,7 +24,7 @@ public class MsSelectQueryBuilderTest
     }
 
     [Theory]
-    [InlineData("\r\nselect tc.* \r\nfrom dbo.TestClass as tc\r\nwhere Id = @0 and Name = @1 and Age = @2 and Timespan = @3")]
+    [InlineData("\r\nselect tc.* \r\nfrom dbo.TestClass as tc\r\nwhere tc.Id = @0 and tc.Name = @1 and tc.Age = @2 and tc.Timespan = @3")]
     public void SelectWhere_BuildSql(string expected)
     {
         var source = new QueryBuilderSource();

@@ -7,12 +7,14 @@ using QueryBuilder.Core.Helpers;
 namespace QueryBuilder.Ms.Queries;
 
 public interface IMsWhereBuilder<T> : IWhereBuilder<T>
+    where T : ITableBuilder
 {
     IMsWhereBuilder<T> EqualTo<TField>([NotNull] Expression<Func<T, TField>> column, TField value);
     IMsWhereBuilder<T> And();
 }
 
 public class MsWhereBuilder<T> : WhereQueryBuilder<T>, IMsWhereBuilder<T>
+    where T : ITableBuilder
 {
     public MsWhereBuilder(QueryBuilderSource source) : base(source) { }
 
@@ -24,7 +26,7 @@ public class MsWhereBuilder<T> : WhereQueryBuilder<T>, IMsWhereBuilder<T>
 
     public MsWhereBuilder<T> EqualTo<TField>([NotNull] Expression<Func<T, TField>> column, [NotNull] TField value)
     {
-        EqualToTranslator.Make(CommonExpression.GetColumnName(column), value).Run(Source);
+        EqualToTranslator<T>.Make(CommonExpression.GetColumnName(column), value).Run(Source);
         return this;
     }
 

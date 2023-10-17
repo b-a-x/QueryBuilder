@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 namespace QueryBuilder.Ms.Queries;
 
 public interface IMsJoinBuilder<TLeft, TRigth>
+    where TLeft : ITableBuilder
     where TRigth : ITableBuilder
 {
     IMsJoinBuilder<TLeft, TRigth> EqualTo<TLeftField, TRigthField>([NotNull] Expression<Func<TLeft, TLeftField>> columnLeft, [NotNull] Expression<Func<TRigth, TRigthField>> columnRigth);
@@ -14,6 +15,7 @@ public interface IMsJoinBuilder<TLeft, TRigth>
 }
 
 public class MsJoinBuilder<TLeft, TRigth> : QueryBuilderCore, IMsJoinBuilder<TLeft, TRigth>
+    where TLeft : ITableBuilder
     where TRigth : ITableBuilder
 {
     protected MsJoinBuilder(QueryBuilderSource source) : base(source)
@@ -28,7 +30,7 @@ public class MsJoinBuilder<TLeft, TRigth> : QueryBuilderCore, IMsJoinBuilder<TLe
 
     public MsJoinBuilder<TLeft, TRigth> EqualTo<TLeftField, TRigthField>(Expression<Func<TLeft, TLeftField>> columnLeft, Expression<Func<TRigth, TRigthField>> columnRigth)
     {
-        EqualTranslator.Make(CommonExpression.GetColumnName(columnLeft), CommonExpression.GetColumnName(columnRigth)).Run(Source);
+        EqualTranslator<TLeft, TRigth>.Make(CommonExpression.GetColumnName(columnLeft), CommonExpression.GetColumnName(columnRigth)).Run(Source);
         return this;
     }
 

@@ -6,7 +6,7 @@ namespace QueryBuilder.Ms.Test.Queris;
 public class MsWhereBuilderTest
 {
     [Theory]
-    [InlineData("\r\nwhere Name = @0 and ")]
+    [InlineData("\r\nwhere tc.Name = @0 and ")]
     public void Where_BuildSql(string expected)
     {
         var source = new QueryBuilderSource();
