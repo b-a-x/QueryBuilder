@@ -13,16 +13,20 @@ public interface IMsWhereBuilder<T> : IWhereBuilder<T>
     IMsWhereBuilder<T> And();
 }
 
-public class MsWhereBuilder<T> : WhereQueryBuilder<T>, IMsWhereBuilder<T>
+public class MsWhereBuilder : QueryBuilderCore
+{
+    protected MsWhereBuilder(QueryBuilderSource source) : base(source)
+    {
+    }
+
+    public void Where() 
+        => CommandTranslator.Make("where").Run(Source);
+}
+
+public class MsWhereBuilder<T> : MsWhereBuilder, IMsWhereBuilder<T>
     where T : ITableBuilder
 {
     public MsWhereBuilder(QueryBuilderSource source) : base(source) { }
-
-    public MsWhereBuilder<T> Where()
-    {
-        CommandTranslator.Make("where").Run(Source);
-        return this;
-    }
 
     public MsWhereBuilder<T> EqualTo<TField>([NotNull] Expression<Func<T, TField>> column, [NotNull] TField value)
     {
@@ -38,7 +42,15 @@ public class MsWhereBuilder<T> : WhereQueryBuilder<T>, IMsWhereBuilder<T>
 
     public static MsWhereBuilder<T> Make(QueryBuilderSource source, Action<MsWhereBuilder<T>> inner)
     {
-        var obj = new MsWhereBuilder<T>(source).Where();
+        var obj = new MsWhereBuilder<T>(source);
+        inner?.Invoke(obj);
+        return obj;
+    }
+
+    public static MsWhereBuilder<T> MakeWhere(QueryBuilderSource source, Action<MsWhereBuilder<T>> inner)
+    {
+        var obj = new MsWhereBuilder<T>(source);
+        obj.Where();
         inner?.Invoke(obj);
         return obj;
     }
@@ -48,4 +60,37 @@ public class MsWhereBuilder<T> : WhereQueryBuilder<T>, IMsWhereBuilder<T>
 
     IMsWhereBuilder<T> IMsWhereBuilder<T>.And() =>
        And();
+}
+
+public interface IMsWhereBuilder<TLeft, TRigth>
+    where TLeft : ITableBuilder
+    where TRigth : ITableBuilder
+{
+    IMsWhereBuilder<T> Bind<T>() where T : ITableBuilder;
+}
+
+public class MsWhereBuilder<TLeft, TRigth> : MsWhereBuilder, IMsWhereBuilder<TLeft, TRigth>
+    where TLeft : ITableBuilder
+    where TRigth : ITableBuilder
+{
+    public MsWhereBuilder(QueryBuilderSource source) : base(source)
+    {
+    }
+
+    public MsWhereBuilder<T> Bind<T>() 
+        where T : ITableBuilder
+    {
+        return MsWhereBuilder<T>.Make(Source, null);
+    }
+
+    IMsWhereBuilder<T> IMsWhereBuilder<TLeft, TRigth>.Bind<T>() 
+        => Bind<T>();
+
+    public static MsWhereBuilder<TLeft, TRigth> Make(QueryBuilderSource source, Action<MsWhereBuilder<TLeft, TRigth>> inner)
+    {
+        var obj = new MsWhereBuilder<TLeft, TRigth>(source);
+        obj.Where();
+        inner?.Invoke(obj);
+        return obj;
+    }
 }
