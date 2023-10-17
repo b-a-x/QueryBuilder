@@ -43,8 +43,10 @@ public class MsSelectQueryBuilderTest
     {
         var source = new QueryBuilderSource();
         new MsSelectQueryBuilder<TestClass, MoreTestClass>(source)
-            .Select(x => x.All(), 
-                    y => y.All())
+            .Select(x => { 
+                x.Bind<TestClass>().All();
+                x.Bind<MoreTestClass>().All();
+            })
             .Join(x => x.EqualTo(x => x.Id, x => x.Id));
         Assert.Equal(expected, source.Query.ToString());
     }

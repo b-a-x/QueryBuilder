@@ -61,7 +61,7 @@ public interface IMsSelectQueryBuilder<TOne, TTwo>
     where TOne : ITableBuilder
     where TTwo : ITableBuilder
 {
-    IMsSelectQueryBuilder<TOne, TTwo> Select(Action<IMsSelectBuilder<TOne>> one, Action<IMsSelectBuilder<TTwo>> two);
+    IMsSelectQueryBuilder<TOne, TTwo> Select(Action<IMsSelectBuilder<TOne, TTwo>> inner);
     IMsSelectQueryBuilder<TOne, TTwo> Join(Action<IMsJoinBuilder<TOne, TTwo>> inner);
     //IMsSelectQueryBuilder<TOne, TTwo> Where(Action<IMsWhereBuilder<T>> inner);
 }
@@ -83,6 +83,14 @@ public class MsSelectQueryBuilder<TOne, TTwo> : SelectQueryBuilder<TOne>, IMsSel
         return this;
     }
 
+    public MsSelectQueryBuilder<TOne, TTwo> Select(Action<MsSelectBuilder<TOne, TTwo>> inner)
+    {
+        Select();
+        MsSelectBuilder<TOne, TTwo>.Make(Source, inner);
+        From();
+        return this;
+    }
+
     public MsSelectQueryBuilder<TOne, TTwo> Join(Action<MsJoinBuilder<TOne, TTwo>> inner)
     {
         MsJoinBuilder<TOne, TTwo>.Make(Source, inner);
@@ -92,11 +100,11 @@ public class MsSelectQueryBuilder<TOne, TTwo> : SelectQueryBuilder<TOne>, IMsSel
     IMsSelectQueryBuilder<TOne, TTwo> IMsSelectQueryBuilder<TOne, TTwo>.Join(Action<IMsJoinBuilder<TOne, TTwo>> inner) 
         => Join(inner);
 
-    IMsSelectQueryBuilder<TOne, TTwo> IMsSelectQueryBuilder<TOne, TTwo>.Select(Action<IMsSelectBuilder<TOne>> one, Action<IMsSelectBuilder<TTwo>> two) 
-        => Select(one, two);
-
     public static MsSelectQueryBuilder<TOne, TTwo> Make(QueryBuilderSource source)
     {
         return new MsSelectQueryBuilder<TOne, TTwo>(source);
     }
+
+    IMsSelectQueryBuilder<TOne, TTwo> IMsSelectQueryBuilder<TOne, TTwo>.Select(Action<IMsSelectBuilder<TOne, TTwo>> inner) 
+        => Select(inner);
 }
