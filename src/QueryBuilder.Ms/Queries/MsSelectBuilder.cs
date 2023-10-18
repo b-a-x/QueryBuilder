@@ -12,6 +12,7 @@ public interface IMsSelectBuilder<T>
     IMsSelectBuilder<TDto> Bind<TDto>() where TDto : ITableBuilder;
     IMsSelectBuilder<T> All();
     IMsSelectBuilder<T> Field<TField>([NotNull] Expression<Func<T, TField>> column);
+    IMsSelectBuilder<T> Field(string column);
     IMsSelectBuilder<T> As(string value);
 }
 
@@ -40,6 +41,12 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
         return this;
     }
 
+    public MsSelectBuilder<T> Field(string column)
+    {
+        FieldTranslator<T>.Make(column).Run(Source);
+        return this;
+    }
+
     public MsSelectBuilder<TDto> Bind<TDto>() 
         where TDto : ITableBuilder
     {
@@ -64,4 +71,7 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
 
     IMsSelectBuilder<TDto> IMsSelectBuilder<T>.Bind<TDto>() 
         => Bind<TDto>();
+
+    IMsSelectBuilder<T> IMsSelectBuilder<T>.Field(string column) 
+        => Field(column);
 }

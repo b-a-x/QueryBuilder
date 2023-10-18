@@ -47,6 +47,80 @@ public class MsQueryBuilderBenchmarck
     }
 
     [Benchmark]
+    public string QueryBuilderNameOf()
+    {
+        Action<IMsQueryBuilder> builder = b => b
+        .Select<Info_TI_Hist>(x =>
+        {
+            x.All();
+            x.Bind<Info_TI>().Field(nameof(Info_TI.MRid));
+            x.Bind<Dict_PS>().Field(nameof(Dict_PS.StringName)).As("PSName");
+            x.Bind<Dict_TI_RegistrationTypes>().Field(nameof(Dict_TI_RegistrationTypes.Name)).As("RegistrationTypeName");
+            x.Bind<v_Dict_Hier>().Field(nameof(v_Dict_Hier.HierLev1_ID))
+                                 .Field(nameof(v_Dict_Hier.HierLev2_ID))
+                                 .Field(nameof(v_Dict_Hier.HierLev3_ID))
+                                 .Field(nameof(v_Dict_Hier.HierLev1Name))
+                                 .Field(nameof(v_Dict_Hier.HierLev2Name))
+                                 .Field(nameof(v_Dict_Hier.HierLev3Name));
+            x.Bind<MGLEP_TI_COUNTRIES>().Field(nameof(MGLEP_TI_COUNTRIES.COUNTRY_ID));
+            x.Bind<MGLEP_SPR_COUNTRIES>().Field(nameof(MGLEP_SPR_COUNTRIES.NAME)).As("CountryName");
+            x.Bind<Dict_Areas>().Field(nameof(Dict_Areas.ATSAreaName));
+            x.Bind<Dict_AIS>().Field(nameof(Dict_AIS.ATSAISName));
+        })
+        .Join<Info_TI>(x => x.EqualTo(nameof(Info_TI_Hist.TI_ID), nameof(Info_TI.TI_ID)))
+        .Join<Dict_PS>(x => x.EqualTo(nameof(Info_TI_Hist.PS_ID), nameof(Dict_PS.PS_ID)))
+        .Join<Dict_TI_RegistrationTypes>(x => x.EqualTo(nameof(Info_TI_Hist.RegistrationType), nameof(Dict_TI_RegistrationTypes.RegistrationType)))
+        .Join<Dict_TI_Types>(x => x.EqualTo(nameof(Info_TI_Hist.TIType), nameof(Dict_TI_Types.TIType)))
+        .Join<Dict_Areas>(x => x.EqualTo(nameof(Info_TI_Hist.ATSArea_ID), nameof(Dict_Areas.ATSArea_ID)))
+        .Join<Dict_AIS>(x => x.EqualTo(nameof(Info_TI_Hist.ATSAIS_ID), nameof(Dict_AIS.ATSAIS_ID)))
+        .LeftJoin<MGLEP_TI_COUNTRIES>(x => x.EqualTo(nameof(Info_TI_Hist.TI_ID), nameof(MGLEP_TI_COUNTRIES.TI_ID)))
+        .LeftJoin<MGLEP_TI_COUNTRIES, MGLEP_SPR_COUNTRIES>(x => x.EqualTo(nameof(MGLEP_TI_COUNTRIES.COUNTRY_ID), nameof(MGLEP_SPR_COUNTRIES.ID)))
+        .Join<Dict_PS, v_Dict_Hier>(x => x.EqualTo(nameof(Dict_PS.HierLev3_ID), nameof(v_Dict_Hier.HierLev3_ID)));
+
+        var source = new QueryBuilderSource();
+        builder(new MsQueryBuilder(source));
+
+        return source.Query.ToString();
+    }
+
+    [Benchmark]
+    public string QueryBuilderString()
+    {
+        Action<IMsQueryBuilder> builder = b => b
+        .Select<Info_TI_Hist>(x =>
+        {
+            x.All();
+            x.Bind<Info_TI>().Field("MRid");
+            x.Bind<Dict_PS>().Field("StringName").As("PSName");
+            x.Bind<Dict_TI_RegistrationTypes>().Field("Name").As("RegistrationTypeName");
+            x.Bind<v_Dict_Hier>().Field("HierLev1_ID")
+                                 .Field("HierLev2_ID")
+                                 .Field("HierLev3_ID")
+                                 .Field("HierLev1Name")
+                                 .Field("HierLev2Name")
+                                 .Field("HierLev3Name");
+            x.Bind<MGLEP_TI_COUNTRIES>().Field("COUNTRY_ID");
+            x.Bind<MGLEP_SPR_COUNTRIES>().Field("NAME").As("CountryName");
+            x.Bind<Dict_Areas>().Field("ATSAreaName");
+            x.Bind<Dict_AIS>().Field("ATSAISName");
+        })
+        .Join<Info_TI>(x => x.EqualTo("TI_ID", "TI_ID"))
+        .Join<Dict_PS>(x => x.EqualTo("PS_ID", "PS_ID"))
+        .Join<Dict_TI_RegistrationTypes>(x => x.EqualTo("RegistrationType", "RegistrationType"))
+        .Join<Dict_TI_Types>(x => x.EqualTo("TIType", "TIType"))
+        .Join<Dict_Areas>(x => x.EqualTo("ATSArea_ID", "ATSArea_ID"))
+        .Join<Dict_AIS>(x => x.EqualTo("ATSAIS_ID", "ATSAIS_ID"))
+        .LeftJoin<MGLEP_TI_COUNTRIES>(x => x.EqualTo("TI_ID", "TI_ID"))
+        .LeftJoin<MGLEP_TI_COUNTRIES, MGLEP_SPR_COUNTRIES>(x => x.EqualTo("COUNTRY_ID", "ID"))
+        .Join<Dict_PS, v_Dict_Hier>(x => x.EqualTo("HierLev3_ID", "HierLev3_ID"));
+
+        var source = new QueryBuilderSource();
+        builder(new MsQueryBuilder(source));
+
+        return source.Query.ToString();
+    }
+
+    [Benchmark]
     public string LoadFile()
     {
         var result = new StringBuilder();
