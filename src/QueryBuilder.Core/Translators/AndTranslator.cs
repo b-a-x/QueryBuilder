@@ -2,7 +2,7 @@
 
 namespace QueryBuilder.Core.Translators;
 
-public class AndTranslator : Translator
+/*public class AndTranslator : Translator
 {
     public override void Run(QueryBuilderSource source)
     {
@@ -12,5 +12,14 @@ public class AndTranslator : Translator
     public static AndTranslator Make()
     {
         return new AndTranslator();
+    }
+}
+*/
+
+public readonly ref struct AndTranslator
+{
+    public void Run(QueryBuilderSource source)
+    {
+        source.Query.Append(" and ");
     }
 }

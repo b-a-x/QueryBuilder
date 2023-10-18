@@ -1,9 +1,21 @@
 ﻿using QueryBuilder.Core.Queries;
-using QueryBuilder.Core.Translators;
 
 namespace QueryBuilder.Ms.Translators;
 
-public class AsTranslator : Translator
+public readonly ref struct AsTranslator
+{
+    private readonly string _value;
+    public AsTranslator(string value)
+    {
+        _value = value;
+    }
+
+    public void Run(QueryBuilderSource source)
+    {
+        source.Query.Append("as ").Append(_value).Append(" ");
+    }
+}
+/*public class AsTranslator : Translator
 {
     private readonly string _value;
     public AsTranslator(string value)
@@ -19,4 +31,4 @@ public class AsTranslator : Translator
     {
         return new AsTranslator(value);
     }
-}
+}*/

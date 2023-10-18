@@ -170,10 +170,4 @@ public ref struct ValueStringBuilder
             ArrayPool<char>.Shared.Return(toReturn);
         }
     }
-
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    public Span<char> GetBuffer()
-    {
-        return _buffer[.._length];
-    }
 }

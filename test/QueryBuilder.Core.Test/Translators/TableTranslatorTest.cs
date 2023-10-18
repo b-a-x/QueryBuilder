@@ -11,7 +11,7 @@ public class TableTranslatorTest
     public void Table_BuildTableAndSchemaAndAlias(string expected)
     {
         var source = new QueryBuilderSource();
-        TableTranslator.Make("test", new TableBuilder("test", "TestClass", "tc")).Run(source);
+        new TableTranslator("test", new TableBuilder("test", "TestClass", "tc")).Run(source);
         Assert.Equal(expected, source.Query.ToString());
     }
 }

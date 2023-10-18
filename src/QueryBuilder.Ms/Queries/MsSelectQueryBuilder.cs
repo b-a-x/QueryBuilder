@@ -28,7 +28,7 @@ public class MsSelectQueryBuilder<T> : QueryBuilderCore, IMsSelectQueryBuilder<T
 
     public MsSelectQueryBuilder<T> Select()
     {
-        CommandTranslator.Make("select").Run(Source);
+        new CommandTranslator("select").Run(Source);
         return this;
     }
 
@@ -42,7 +42,7 @@ public class MsSelectQueryBuilder<T> : QueryBuilderCore, IMsSelectQueryBuilder<T
 
     public MsSelectQueryBuilder<T> From()
     {
-        TableTranslator<T>.Make("from").Run(Source);
+        new TableTranslator("from", T.GetTable()).Run(Source);
         return this;
     }
 

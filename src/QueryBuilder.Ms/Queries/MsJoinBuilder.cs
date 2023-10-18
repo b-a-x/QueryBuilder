@@ -25,31 +25,31 @@ public class MsJoinBuilder<TLeft, TRigth> : QueryBuilderCore, IMsJoinBuilder<TLe
 
     public MsJoinBuilder<TLeft, TRigth> Join()
     {
-        JoinTranslator<TRigth>.Make("join").Run(Source);
+        new JoinTranslator("join", TRigth.GetTable()).Run(Source);
         return this;
     }
 
     public MsJoinBuilder<TLeft, TRigth> LeftJoin()
     {
-        JoinTranslator<TRigth>.Make("left join").Run(Source);
+        new JoinTranslator("left join", TRigth.GetTable()).Run(Source);
         return this;
     }
 
     public MsJoinBuilder<TLeft, TRigth> EqualTo<TLeftField, TRigthField>(Expression<Func<TLeft, TLeftField>> columnLeft, Expression<Func<TRigth, TRigthField>> columnRigth)
     {
-        EqualTranslator<TLeft, TRigth>.Make(CommonExpression.GetColumnName(columnLeft), CommonExpression.GetColumnName(columnRigth)).Run(Source);
+        new EqualTranslator(CommonExpression.GetColumnName(columnLeft), CommonExpression.GetColumnName(columnRigth), TLeft.GetTable(), TRigth.GetTable()).Run(Source);
         return this;
     }
 
     public MsJoinBuilder<TLeft, TRigth> EqualTo(string columnLeft, string columnRigth)
     {
-        EqualTranslator<TLeft, TRigth>.Make(columnLeft, columnRigth).Run(Source);
+        new EqualTranslator(columnLeft, columnRigth, TLeft.GetTable(), TRigth.GetTable()).Run(Source);
         return this;
     }
 
     public MsJoinBuilder<TLeft, TRigth> And()
     {
-        AndTranslator.Make().Run(Source);
+        new AndTranslator().Run(Source);
         return this;
     }
 

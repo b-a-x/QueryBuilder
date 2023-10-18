@@ -6,7 +6,7 @@ using QueryBuilder.Core.Helpers;
 
 namespace QueryBuilder.Ms.Queries;
 
-public interface IMsWhereBuilder<T> : IWhereBuilder<T>
+public interface IMsWhereBuilder<T>
     where T : ITableBuilder
 {
     IMsSelectBuilder<TDto> Bind<TDto>() where TDto : ITableBuilder;
@@ -21,19 +21,19 @@ public class MsWhereBuilder<T> : QueryBuilderCore, IMsWhereBuilder<T>
 
     public MsWhereBuilder<T> Where()
     {
-        CommandTranslator.Make("where").Run(Source);
+        new CommandTranslator("where").Run(Source);
         return this;
     }
 
     public MsWhereBuilder<T> EqualTo<TField>([NotNull] Expression<Func<T, TField>> column, [NotNull] TField value)
     {
-        EqualToTranslator<T>.Make(CommonExpression.GetColumnName(column), value).Run(Source);
+        new EqualToTranslator(CommonExpression.GetColumnName(column), value, T.GetTable()).Run(Source);
         return this;
     }
 
     public MsWhereBuilder<T> And()
     {
-        AndTranslator.Make().Run(Source);
+        new AndTranslator().Run(Source);
         return this;
     }
 

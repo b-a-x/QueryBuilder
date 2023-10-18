@@ -21,7 +21,7 @@ public class MsDeleteQueryBuilder<T> : QueryBuilderCore, IMsDeleteQueryBuilder<T
 
     public MsDeleteQueryBuilder<T> Delete()
     {
-        TableTranslator<T>.Make("delete").Run(Source);
+        new TableTranslator("delete", T.GetTable()).Run(Source);
         return this;
     }
 

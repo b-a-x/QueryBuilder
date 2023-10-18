@@ -3,12 +3,14 @@ using QueryBuilder.Core.Queries;
 
 namespace QueryBuilder.Core.Translators;
 
-public class TableTranslator : CommandTranslator
+/*public class TableTranslator : Translator//: CommandTranslator
 {
     protected readonly TableBuilder _table;
-    public TableTranslator(string command, TableBuilder table) : base(command) 
+    protected readonly string command;
+    public TableTranslator(string command, TableBuilder table) //: base(command) 
     {
         _table = table;
+        this.command = command;
     }
 
     public override void Run(QueryBuilderSource source)
@@ -44,4 +46,38 @@ public class TableTranslator<T> : TableTranslator
 
     public new static TableTranslator<T> Make(string command) =>
         new TableTranslator<T>(command);
+}*/
+
+public readonly ref struct TableTranslator
+{
+    private readonly TableBuilder _table;
+    private readonly string _command;
+
+    public TableTranslator(string command, TableBuilder table)
+    {
+        _table = table;
+        _command = command;
+    }
+
+    public void Run(QueryBuilderSource source)
+    {
+        if (string.IsNullOrEmpty(_table.TableName))
+            throw new Exception("not used interface");
+
+        source.Query.Append("\r\n");
+        if (string.IsNullOrEmpty(_table.Alias) == false)
+        {
+            if (string.IsNullOrEmpty(_table.Schema))
+                source.Query.Append(_command).Append(" ").Append(_table.TableName).Append(" as ").Append(_table.Alias);
+            else
+                source.Query.Append(_command).Append(" ").Append(_table.Schema).Append(".").Append(_table.TableName).Append(" as ").Append(_table.Alias);
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(_table.Schema))
+                source.Query.Append(_command).Append(" ").Append(_table.TableName);
+            else
+                source.Query.Append(_command).Append(" ").Append(_table.Schema).Append(".").Append(_table.TableName);
+        }
+    }
 }

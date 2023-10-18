@@ -25,25 +25,25 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
 
     public MsSelectBuilder<T> All()
     {
-        AllTranslator<T>.Make().Run(Source);
+        new AllTranslator(T.GetTable()).Run(Source);
         return this;
     }
 
     public MsSelectBuilder<T> As(string value)
     {
-        AsTranslator.Make(value).Run(Source);
+        new AsTranslator(value).Run(Source);
         return this;
     }
 
     public MsSelectBuilder<T> Field<TField>(Expression<Func<T, TField>> column)
     {
-        FieldTranslator<T>.Make(CommonExpression.GetColumnName(column)).Run(Source);
+        new FieldTranslator(CommonExpression.GetColumnName(column), T.GetTable()).Run(Source);
         return this;
     }
 
     public MsSelectBuilder<T> Field(string column)
     {
-        FieldTranslator<T>.Make(column).Run(Source);
+        new FieldTranslator(column, T.GetTable()).Run(Source);
         return this;
     }
 
