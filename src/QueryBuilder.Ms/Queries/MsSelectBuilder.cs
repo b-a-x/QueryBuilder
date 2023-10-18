@@ -9,6 +9,7 @@ namespace QueryBuilder.Ms.Queries;
 public interface IMsSelectBuilder<T>
     where T : ITableBuilder
 {
+    IMsSelectBuilder<TDto> Bind<TDto>() where TDto : ITableBuilder;
     IMsSelectBuilder<T> All();
     IMsSelectBuilder<T> Field<TField>([NotNull] Expression<Func<T, TField>> column);
     IMsSelectBuilder<T> As(string value);
@@ -39,6 +40,12 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
         return this;
     }
 
+    public MsSelectBuilder<TDto> Bind<TDto>() 
+        where TDto : ITableBuilder
+    {
+        return MsSelectBuilder<TDto>.Make(Source, null);
+    }
+
     public static MsSelectBuilder<T> Make(QueryBuilderSource source, Action<MsSelectBuilder<T>> inner)
     {
         var obj = new MsSelectBuilder<T>(source);
@@ -54,37 +61,7 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
 
     IMsSelectBuilder<T> IMsSelectBuilder<T>.As(string value) 
         => As(value);
-}
 
-
-public interface IMsSelectBuilder<TLeft, TRight>
-    where TLeft : ITableBuilder
-    where TRight : ITableBuilder
-{
-    IMsSelectBuilder<T> Bind<T>() where T : ITableBuilder;
-}
-
-public class MsSelectBuilder<TLeft, TRight> : QueryBuilderCore, IMsSelectBuilder<TLeft, TRight>
-    where TLeft : ITableBuilder
-    where TRight : ITableBuilder
-{
-    public MsSelectBuilder(QueryBuilderSource source) : base(source)
-    {
-    }
-
-    public MsSelectBuilder<T> Bind<T>()
-        where T : ITableBuilder
-    {
-        return MsSelectBuilder<T>.Make(Source, null);
-    }
-
-    public static MsSelectBuilder<TLeft, TRight> Make(QueryBuilderSource source, Action<MsSelectBuilder<TLeft, TRight>> inner)
-    {
-        var obj = new MsSelectBuilder<TLeft, TRight>(source);
-        inner?.Invoke(obj);
-        return obj;
-    }
-
-    IMsSelectBuilder<T> IMsSelectBuilder<TLeft, TRight>.Bind<T>() 
-        => Bind<T>();
+    IMsSelectBuilder<TDto> IMsSelectBuilder<T>.Bind<TDto>() 
+        => Bind<TDto>();
 }

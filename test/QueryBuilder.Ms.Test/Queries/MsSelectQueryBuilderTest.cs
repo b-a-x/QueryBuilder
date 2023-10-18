@@ -38,34 +38,22 @@ public class MsSelectQueryBuilderTest
     }
 
     [Theory]
-    [InlineData("\r\nselect tc.* ,mtc.* \r\nfrom dbo.TestClass as tc\r\njoin dbo.MoreTestClass as mtc on tc.Id = mtc.Id")]
+    [InlineData("\r\nselect tc.* ,mtc.* \r\nfrom dbo.TestClass as tc\r\njoin dbo.MoreTestClass as mtc on tc.Id = mtc.Id\r\nwhere tc.Id = @0 and mtc.Age = @1")]
     public void SelectJoin_TwoType_BuildSql(string expected)
     {
         var source = new QueryBuilderSource();
-        new MsSelectQueryBuilder<TestClass, MoreTestClass>(source)
+        new MsSelectQueryBuilder<TestClass>(source)
             .Select(x => { 
-                x.Bind<TestClass>().All();
+                x.All();
                 x.Bind<MoreTestClass>().All();
             })
-            .Join(x => x.EqualTo(x => x.Id, x => x.Id));
-        Assert.Equal(expected, source.Query.ToString());
-    }
-
-    [Theory]
-    [InlineData("\r\nselect tc.* \r\nfrom dbo.TestClass as tc\r\nwhere tc.Id = @0 and mtc.Age = @1")]
-    public void SelectWhere_TwoType_BuildSql(string expected)
-    {
-        var source = new QueryBuilderSource();
-        new MsSelectQueryBuilder<TestClass, MoreTestClass>(source)
-            .Select(x => 
-            {
-                x.Bind<TestClass>().All();
-            })
+            .Join<MoreTestClass>(x => x.EqualTo(x => x.Id, x => x.Id))
             .Where(x =>
             {
-                x.Bind<TestClass>().EqualTo(y => y.Id, Guid.Empty).And();
+                x.EqualTo(y => y.Id, Guid.Empty).And();
                 x.Bind<MoreTestClass>().EqualTo(y => y.Age, 1);
             });
+
         Assert.Equal(expected, source.Query.ToString());
     }
 }

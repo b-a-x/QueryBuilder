@@ -35,12 +35,12 @@ public class MsQueryBuilderTests
     public void MsQueryBuilder_One_Build(string expected)
     {
         Action<IMsQueryBuilder> builder = b => b
-        .Select<Info_TI_Hist, Info_TI>(x => 
+        .Select<Info_TI_Hist>(x => 
         {
-            x.Bind<Info_TI_Hist>().All();
+            x.All();
             x.Bind<Info_TI>().Field(x => x.MRid);
         })
-        .Join(x => x.EqualTo(x => x.TI_ID, x => x.TI_ID));
+        .Join<Info_TI>(x => x.EqualTo(x => x.TI_ID, x => x.TI_ID));
         
         var source = new QueryBuilderSource();
         builder(new MsQueryBuilder(source));
