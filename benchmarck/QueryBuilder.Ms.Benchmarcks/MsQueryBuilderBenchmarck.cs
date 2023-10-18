@@ -5,6 +5,23 @@ using System.Text;
 
 namespace QueryBuilder.Ms.Benchmarcks;
 
+/*
+ BenchmarkDotNet v0.13.9+228a464e8be6c580ad9408e98f18813f6407fb5a, Windows 10 (10.0.19045.3570/22H2/2022Update)
+AMD Ryzen 7 3800X, 1 CPU, 16 logical and 8 physical cores
+.NET SDK 7.0.401
+  [Host]     : .NET 7.0.11 (7.0.1123.42427), X64 RyuJIT AVX2 [AttachedDebugger]
+  DefaultJob : .NET 7.0.11 (7.0.1123.42427), X64 RyuJIT AVX2
+
+
+| Method             | Mean       | Error     | StdDev    | Rank | Gen0   | Gen1   | Allocated |
+|------------------- |-----------:|----------:|----------:|-----:|-------:|-------:|----------:|
+| QueryBuilder       |  20.810 μs | 0.1022 μs | 0.0956 μs |    3 | 2.5330 | 0.0305 |  20.73 KB |
+| QueryBuilderNameOf |   2.162 μs | 0.0390 μs | 0.0345 μs |    2 | 0.5722 | 0.0038 |    4.7 KB |
+| QueryBuilderString |   2.156 μs | 0.0425 μs | 0.0455 μs |    2 | 0.5722 | 0.0038 |    4.7 KB |
+| LoadFile           | 110.908 μs | 1.4929 μs | 1.3965 μs |    4 | 1.7090 |      - |  14.92 KB |
+| StringBuilder      |   1.066 μs | 0.0153 μs | 0.0143 μs |    1 | 0.3433 |      - |    2.8 KB |
+ */
+
 [RankColumn]
 [MemoryDiagnoser]
 public class MsQueryBuilderBenchmarck
