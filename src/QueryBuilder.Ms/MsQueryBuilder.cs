@@ -4,17 +4,15 @@ using QueryBuilder.Ms.Queries;
 
 namespace QueryBuilder.Ms;
 
-public interface IMsQueryBuilder : IQueryBuilder
+public interface IMsQueryBuilder : IQueryBuilder, ISelect
 {
     IMsDeleteQueryBuilder<T> Delete<T>() 
-        where T : ITableBuilder;
-    IMsSelectQueryBuilder<T> Select<T>(Action<IMsSelectBuilder<T>> inner) 
         where T : ITableBuilder;
 }
 
 public partial class MsQueryBuilder : IMsQueryBuilder
 {
-    IMsSelectQueryBuilder<T> IMsQueryBuilder.Select<T>(Action<IMsSelectBuilder<T>> inner)
+    IMsSelectQueryBuilder<T> ISelect.Select<T>(Action<IMsSelectBuilder<T>> inner)
         => Select(inner);
 
     IMsDeleteQueryBuilder<T> IMsQueryBuilder.Delete<T>()

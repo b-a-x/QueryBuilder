@@ -14,5 +14,5 @@ public partial class MsQueryBuilder : Core.QueryBuilder
 
     public MsSelectQueryBuilder<T> Select<T>(Action<MsSelectBuilder<T>> inner)
         where T : ITableBuilder 
-        => MsSelectQueryBuilder<T>.Make(Source).Select(inner);
+        => MsSelectQueryBuilder<T>.Make(Source, null).Select(inner);
 }

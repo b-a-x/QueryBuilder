@@ -10,7 +10,7 @@ public class MsSelectQueryBuilderTest
     public void Select_BuildSql(string expected)
     {
         var source = new QueryBuilderSource();
-        new MsSelectQueryBuilder<TestClass>(source).Select(x => x.All().Field(x => x.Id).As("qwe"));
+        new MsSelectQueryBuilder<TestClass>(source).Select(x => x.All().Field(x => x.Id).As("qwe")).From();
         Assert.Equal(expected, source.Query.ToString());
     }
 
@@ -19,7 +19,7 @@ public class MsSelectQueryBuilderTest
     public void DoubleSelect_BuildSql(string expected)
     {
         var source = new QueryBuilderSource();
-        new MsSelectQueryBuilder<TestClass>(source).Select(x => x.All()).Select(x => x.All());
+        new MsSelectQueryBuilder<TestClass>(source).Select(x => x.All()).From().Select(x => x.All()).From();
         Assert.Equal(expected, source.Query.ToString());
     }
 
@@ -30,6 +30,7 @@ public class MsSelectQueryBuilderTest
         var source = new QueryBuilderSource();
         new MsSelectQueryBuilder<TestClass>(source)
            .Select(x => x.All())
+           .From()
            .Where(x => x.EqualTo(y => y.Id, Guid.Empty).And()
                         .EqualTo(y => y.Name, null).And()
                         .EqualTo(y => y.Age, 10).And()
@@ -47,6 +48,7 @@ public class MsSelectQueryBuilderTest
                 x.All();
                 x.Bind<MoreTestClass>().All();
             })
+            .From()
             .Join<MoreTestClass>(x => x.EqualTo(x => x.Id, x => x.Id))
             .Where(x =>
             {

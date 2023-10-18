@@ -52,6 +52,7 @@ public class MsQueryBuilderTests
             x.Bind<Dict_Areas>().Field(x => x.ATSAreaName);
             x.Bind<Dict_AIS>().Field(x => x.ATSAISName);
         })
+		.From()
         .Join<Info_TI>(x => x.EqualTo(x => x.TI_ID, x => x.TI_ID))
         .Join<Dict_PS>(x => x.EqualTo(x => x.PS_ID, x => x.PS_ID))
         .Join<Dict_TI_RegistrationTypes>(x => x.EqualTo(x => x.RegistrationType, x => x.RegistrationType))
@@ -145,5 +146,284 @@ public class MsQueryBuilderTests
         public int ATSAISName { get; set; }
         public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_AIS", "ais");
     }
+    #endregion
+    #region 2
+    #region source
+
+    /*
+-- declare @startDate datetime = '2021-08-01 00:00:00';
+-- declare @finishDate datetime = '2021-11-30 23:59:00';
+
+select sub_dc_ec.*,
+sub_tp_mtp.TP_ID
+,sub_tp_mtp.MTPFlowType
+,sub_tp_mtp.TPSD
+,sub_tp_mtp.TPFD
+,sub_tp_mtp.TPFederalSubject_ID
+,sub_tp_mtp.TPName
+,sub_tp_mtp.Section_ID
+,sub_tp_mtp.TPNSIQualityStatus
+,sub_tp_mtp.TP_MRid
+,sub_tp_mtp.IsMTP
+,sub_tp_mtp.TP2_ElectricConnection_ID
+ from
+(
+	select sub_dc.*,
+    ec.ElectricConnection_ID,
+	ec.ElectricConnectionVersion_ID,
+	ec.FederalSubject_ID as ECFederalSubject_ID,
+    ec.Title as ECTitle,
+	ec.StartDate as ECSD,
+	ec.FinishDate as ECFD,
+	ecr.NSIQualityStatus as ECNSIQualityStatus,
+	ecr.MRid as EC_MRid,
+	do2.Organization_ID as Consumer_ID,
+    do2.Organization_Name as ConsumerName,
+	do2.SAP_ID as Consumer_SAP_ID,
+    do2.INN as ConsumerINN,
+	qs.NSIQualityStatus as Consumer_NSIQualityStatus,
+	ROW_NUMBER() over(partition by sub_dc.ConsumerContract_ID, ec.ElectricConnection_ID, ec.Organization_ID order by ec.StartDate desc) as rn_ec 
+	from
+	(
+		select 
+		dc1.ConsumerContract_ID,
+		dc1.HierLev1_ID,
+		dc1.ContractNumber,
+		dc1.Organization_ID,
+		dc1.SignDate,
+		dc1.FinishDate,
+		dc1.Perspective,
+		dc1.TimeOffset,
+		dc1.OLD_ID,
+		dc1.Comment,
+		dc1.ConsumerContract_SAP_ID,
+		dc1.LastModifiedDate,
+		dcct.ConsumerContract_Type_ID,
+		dcct.ConsumerContract_Type_Name,
+		dct.ContractorTypeVersion_ID,
+		h1.StringName as HierLev1Name,
+		do1.Organization_Name as ContractorName,
+		h1.SAP_ID as HierLev1_SAP_ID,
+		dc1.IsExistingContract,
+		do1.SAP_ID as Organization_SAP_ID,
+		h1.ShortCode as ShortCode
+		,csap.ContractStatus as ConsumerContract_SAP_Status
+		,isnull(csap.SAP_ID, '') as SAP_ID
+		,csap.EDF
+		,csap1.NSIQualityStatus as ConsumerContract_SAP_NSIQualityStatus
+		,csap1.MRid as ConsumerContract_MRid
+		,(case
+			when csap.SAP_ID is null then 0
+			else 1
+		end) as HasSAP_ID
+		, case when csap.ContractStatus = 40 then 1 when csap.ContractStatus is null and dc1.FinishDate >= @FinishDate then 1 else 0 end as IsActive
+		,ROW_NUMBER() over(partition by dc1.ConsumerContract_ID, csap.ConsumerContract_SAP_ID order by csap.StartDate desc) as rn_sap
+		,min(csap.ContractStatus) over (partition by csap.ConsumerContract_SAP_ID) as minStatus_40_70
+		from Dict_ConsumerContract dc1
+		join Dict_HierLev1 h1 on h1.HierLev1_ID = dc1.HierLev1_ID
+		join Dict_Organization do1 on do1.Organization_ID = dc1.Organization_ID
+		left join Dict_ContractorType_Hist dct on dct.ConsumerContract_ID = dc1.ConsumerContract_ID and dct.FinishDate between dct.StartDate and dct.FinishDate
+		left join Dict_ConsumerContract_Type dcct on dcct.ConsumerContract_Type_ID = dct.ContractorType_ID
+		left join Dict_ConsumerContract_SAP_Hist csap on dc1.ConsumerContract_SAP_ID = csap.ConsumerContract_SAP_ID
+		left join Dict_ConsumerContract_SAP csap1 on dc1.ConsumerContract_SAP_ID = csap1.ConsumerContract_SAP_ID
+		where (dc1.FinishDate >= @startDate and csap.ConsumerContract_SAP_ID is null) or (csap.ConsumerContract_SAP_ID is not null and csap.StartDate <= @finishdate and csap.FinishDate >= @startDate)
+	) sub_dc
+	left join Info_ElectricConnection_Hist ec on sub_dc.ConsumerContract_ID = ec.ConsumerContract_ID and ec.StartDate <= @finishdate and ec.FinishDate >= @startDate and ec.IsDeleted = 0
+	left join Info_ElectricConnection_Registry ecr ON ecr.ElectricConnection_ID = ec.ElectricConnection_ID
+	left join Dict_Organization do2 on ec.Organization_ID = do2.Organization_ID
+	left join Dict_Organization_NSIQualityStatus qs on sub_dc.ConsumerContract_ID = qs.ConsumerContract_ID and ec.Organization_ID = qs.Organization_ID
+	where rn_sap = 1 and isnull(minStatus_40_70, 40) = 40
+) sub_dc_ec
+join
+(
+	select 
+	case when tpfs.TP_ID is null then null else tpec.TP_ID end as TP_ID
+	,tpec.ElectricConnection_ID
+	,tpec.MTPFlowType
+	,case when tpfs.TP_ID is null then null else tpec.StartDate end as TPSD
+	,case when tpfs.TP_ID is null then null else tpec.FinishDate end as TPFD
+	,tpfs.FederalSubject_ID as TPFederalSubject_ID
+	,case when tpfs.TP_ID is null then null else tp.StringName end as TPName
+	,isd2.Section_ID
+	,tpr.NSIQualityStatus as TPNSIQualityStatus
+	,tpr.MRid as TP_MRid
+	,0 as IsMTP
+	,ROW_NUMBER() over(partition by tpec.TP_ID, tpec.ElectricConnection_ID, iech.ConsumerContract_ID, iech.Organization_ID order by tpec.StartDate desc, tp.StartDate desc, tpfs.DateStart desc) as rn_tpec
+	,case when tpfs.TP_ID is null then null else tpec.TP2_ElectricConnection_ID end as TP2_ElectricConnection_ID
+	,iech.ConsumerContract_ID
+	,iech.Organization_ID
+	from Info_TP2_ElectricConnection tpec 
+	join Info_TP2_Hist tp on tpec.TP_ID = tp.TP_ID and tpec.StartDate <= tp.FinishDate and tpec.FinishDate >= tp.StartDate
+	join Info_TP2 tpr on tp.TP_ID = tpr.TP_ID
+	join Info_Section_Description2 isd2 on tpec.TP_ID = isd2.TP_ID
+	left join Ref_TP_FederalSubject tpfs on tpec.TP_ID = tpfs.TP_ID and isnull(tpfs.DateEnd,'2099-12-31 23:59') >= @startDate and tpfs.DateStart <= @finishDate
+	join Info_ElectricConnection_Hist iech on tpec.ElectricConnection_ID = iech.ElectricConnection_ID and tpec.FinishDate >= iech.StartDate and tpec.StartDate <= iech.FinishDate
+	where tpec.StartDate <= @finishdate and tpec.FinishDate >= @startDate and tpec.MTPFlowType is null
+
+	union all
+
+	select 
+	tpec.TP_ID
+	,tpec.ElectricConnection_ID
+	,tpec.MTPFlowType
+	,tpec.StartDate as TPSD
+	,case when mtp.FinishDate < tpec.FinishDate then mtp.FinishDate else tpec.FinishDate end as TPFD
+	,mtp.FederalSubject_ID as TPFederalSubject_ID
+	,mtp.MTP_Name as TPName
+	,mtp.Section_ID
+	,mtpr.NSIQualityStatus as TPNSIQualityStatus
+	,mtpr.MRid as TP_MRid
+	,1 as IsMTP
+	,ROW_NUMBER() over(partition by tpec.TP_ID, tpec.ElectricConnection_ID, iech.ConsumerContract_ID, iech.Organization_ID order by tpec.StartDate desc, mtp.StartDate desc) as rn_tpec
+	,tpec.TP2_ElectricConnection_ID
+	,iech.ConsumerContract_ID
+	,iech.Organization_ID
+	from Info_TP2_ElectricConnection tpec 
+	cross apply(select top 1 * from Info_Mediated_TP_Hist mtp where mtp.MTP_ID = tpec.TP_ID and mtp.StartDate <= @FinishDate and mtp.Deleted = 0 order by mtp.FinishDate desc) mtp
+	join Info_ElectricConnection_Hist iech on tpec.ElectricConnection_ID = iech.ElectricConnection_ID and tpec.FinishDate >= iech.StartDate and tpec.StartDate <= iech.FinishDate
+	join Info_Mediated_TP_Registry mtpr ON mtpr.MTP_ID=mtp.MTP_ID
+	where tpec.StartDate <= @finishdate and tpec.FinishDate >= @startDate and tpec.MTPFlowType is not null
+
+	union all
+
+	select distinct
+	null as TP_ID
+	,iech.ElectricConnection_ID
+	,null as MTPFlowType
+	,null as TPSD
+	,null as TPFD
+	,null as TPFederalSubject_ID
+	,null as TPName
+	,null as Section_ID
+	,null as TPNSIQualityStatus
+	,null as TP_MRid
+	,null as IsMTP
+	,1 as rn_tpec
+	,null as TP2_ElectricConnection_ID
+	,iech.ConsumerContract_ID
+	,iech.Organization_ID
+	from Info_TP2_ElectricConnection tpec 
+	right join Info_ElectricConnection_Hist iech on tpec.ElectricConnection_ID = iech.ElectricConnection_ID and tpec.StartDate <= @finishdate and tpec.FinishDate >= @startDate
+	where tpec.ElectricConnection_ID is null
+
+) sub_tp_mtp on sub_tp_mtp.ElectricConnection_ID = sub_dc_ec.ElectricConnection_ID and sub_dc_ec.ConsumerContract_ID = sub_tp_mtp.ConsumerContract_ID and sub_dc_ec.Consumer_ID = sub_tp_mtp.Organization_ID
+where sub_dc_ec.rn_ec = 1 and sub_tp_mtp.rn_tpec = 1
+
+union all
+
+select 
+	dc1.ConsumerContract_ID,
+	dc1.HierLev1_ID,
+	dc1.ContractNumber,
+	dc1.Organization_ID,
+	dc1.SignDate,
+	dc1.FinishDate,
+	dc1.Perspective,
+	dc1.TimeOffset,
+	dc1.OLD_ID,
+	dc1.Comment,
+	dc1.ConsumerContract_SAP_ID,
+	dc1.LastModifiedDate,
+	dcct.ConsumerContract_Type_ID,
+	dcct.ConsumerContract_Type_Name,
+	dct.ContractorTypeVersion_ID,
+	h1.StringName as HierLev1Name,
+	do1.Organization_Name as ContractorName,
+	h1.SAP_ID as HierLev1_SAP_ID,
+	dc1.IsExistingContract,
+	do1.SAP_ID as Organization_SAP_ID,
+	h1.ShortCode as ShortCode
+    ,csap.ContractStatus as ConsumerContract_SAP_Status
+	,isnull(csap.SAP_ID, '') as SAP_ID
+	,csap.EDF
+	,csap1.NSIQualityStatus as ConsumerContract_SAP_NSIQualityStatus
+    ,csap1.MRid ConsumerContract_MRid
+	,(case when csap.SAP_ID is null then 0 else 1 end) as HasSAP_ID
+	,case when csap.ContractStatus = 40 then 1 when csap.ContractStatus is null and dc1.FinishDate >= @FinishDate then 1 else 0 end as IsActive
+	,null as rn_sap
+	,null as minStatus_40_70
+	,
+    null as ElectricConnection_ID,
+	null as ElectricConnectionVersion_ID,
+	null as ECFederalSubject_ID,
+    null as ECTitle,
+	null as ECSD,
+	null as ECFD,
+	null as ECNSIQualityStatus,
+	null as EC_MRid,
+	null as Consumer_ID,
+    null as ConsumerName,
+	null as Consumer_SAP_ID,
+    null as ConsumerINN,
+	null as Consumer_NSIQualityStatus,
+	null as rn_ec,
+	null as TP_ID
+,null as MTPFlowType
+,null as TPSD
+,null as TPFD
+,null as TPFederalSubject_ID
+,null as TPName
+,null as Section_ID
+,null as TPNSIQualityStatus
+,null as TP_MRid
+,null as IsMTP
+,null as TP2_ElectricConnection_ID
+from
+Dict_ConsumerContract dc1
+    join Dict_HierLev1 h1 on h1.HierLev1_ID = dc1.HierLev1_ID
+	join Dict_Organization do1 on do1.Organization_ID = dc1.Organization_ID
+    left join Dict_ContractorType_Hist dct on dct.ConsumerContract_ID = dc1.ConsumerContract_ID and dct.FinishDate between dct.StartDate and dct.FinishDate
+	left join Dict_ConsumerContract_Type dcct on dcct.ConsumerContract_Type_ID = dct.ContractorType_ID
+	left join Dict_ConsumerContract_SAP_Hist csap on dc1.ConsumerContract_SAP_ID = csap.ConsumerContract_SAP_ID and @finishdate between csap.StartDate and csap.FinishDate
+	left join Dict_ConsumerContract_SAP csap1 on dc1.ConsumerContract_SAP_ID = csap1.ConsumerContract_SAP_ID
+	left join Info_ElectricConnection_Hist ec on dc1.ConsumerContract_ID = ec.ConsumerContract_ID and ec.StartDate <= @finishDate and ec.FinishDate >= @startDate and ec.IsDeleted = 0
+where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
+     */
+
+    #endregion
+
+    [Theory]
+    [InlineData("\r\nselect ti.* ,tio.MRid ,ps.StringName as PSName ,rt.Name as RegistrationTypeName ,h.HierLev1_ID ,h.HierLev2_ID ,h.HierLev3_ID ,h.HierLev1Name ,h.HierLev2Name ,h.HierLev3Name ,cc.COUNTRY_ID ,c.NAME as CountryName ,areas.ATSAreaName ,ais.ATSAISName \r\nfrom dbo.Info_TI_Hist as ti\r\njoin dbo.Info_TI as tio on ti.TI_ID = tio.TI_ID\r\njoin dbo.Dict_PS as ps on ti.PS_ID = ps.PS_ID\r\njoin dbo.Dict_TI_RegistrationTypes as rt on ti.RegistrationType = rt.RegistrationType\r\njoin dbo.Dict_TI_Types as tt on ti.TIType = tt.TIType\r\njoin dbo.Dict_Areas as areas on ti.ATSArea_ID = areas.ATSArea_ID\r\njoin dbo.Dict_AIS as ais on ti.ATSAIS_ID = ais.ATSAIS_ID\r\nleft join dbo.MGLEP_TI_COUNTRIES as cc on ti.TI_ID = cc.TI_ID\r\nleft join dbo.MGLEP_SPR_COUNTRIES as c on cc.COUNTRY_ID = c.ID\r\njoin dbo.v_Dict_Hier as h on ps.HierLev3_ID = h.HierLev3_ID")]
+    public void MsQueryBuilder_Two_Build(string expected)
+    {
+		Action<IMsQueryBuilder> builder = b => b
+		.Select<Sub_dc_ec>(x =>
+		{
+			x.All();
+		})
+		.From(x => x.Select<Sub_dc>(x => 
+					{ 
+						x.All(); 
+					})
+					.From(x => x.Select<Dict_ConsumerContract>(x => x.Field(x => x.ConsumerContract_ID))
+								.From()
+						  )
+			  );
+        
+
+
+        var source = new QueryBuilderSource();
+        builder(new MsQueryBuilder(source));
+
+        Assert.Equal(expected, source.Query.ToString());
+    }
+
+    public class Sub_dc_ec : ITableBuilder
+    {
+        public static TableBuilder GetTable() => new TableBuilder("dbo", "Sub_dc_ec", "sub_dc_ec");
+    }
+
+	public class Sub_dc : ITableBuilder
+	{
+        public static TableBuilder GetTable() => new TableBuilder("dbo", "Sub_dc", "sub_dc");
+    }
+
+	public class Dict_ConsumerContract : ITableBuilder
+    {
+		public int ConsumerContract_ID { get; set; }
+
+        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_ConsumerContract", "dc1");
+    }
+
     #endregion
 }
