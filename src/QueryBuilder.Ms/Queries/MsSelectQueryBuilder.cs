@@ -13,6 +13,11 @@ public interface IMsSelectQueryBuilder<T>
     IMsSelectQueryBuilder<T> Join<TLeft, TRigth>(Action<IMsJoinBuilder<TLeft, TRigth>> inner)
         where TLeft : ITableBuilder
         where TRigth : ITableBuilder;
+    IMsSelectQueryBuilder<T> LeftJoin<TRigth>(Action<IMsJoinBuilder<T, TRigth>> inner)
+        where TRigth : ITableBuilder;
+    IMsSelectQueryBuilder<T> LeftJoin<TLeft, TRigth>(Action<IMsJoinBuilder<TLeft, TRigth>> inner)
+        where TLeft : ITableBuilder
+        where TRigth : ITableBuilder;
     IMsSelectQueryBuilder<T> Where(Action<IMsWhereBuilder<T>> inner);
 }
 
@@ -50,7 +55,7 @@ public class MsSelectQueryBuilder<T> : QueryBuilderCore, IMsSelectQueryBuilder<T
     public MsSelectQueryBuilder<T> Join<TRigth>(Action<MsJoinBuilder<T, TRigth>> inner)
         where TRigth : ITableBuilder
     {
-        MsJoinBuilder<T, TRigth>.Make(Source, inner);
+        MsJoinBuilder<T, TRigth>.JoinMake(Source, inner);
         return this;
     }
 
@@ -58,7 +63,22 @@ public class MsSelectQueryBuilder<T> : QueryBuilderCore, IMsSelectQueryBuilder<T
         where TLeft : ITableBuilder
         where TRigth : ITableBuilder
     {
-        MsJoinBuilder<TLeft, TRigth>.Make(Source, inner);
+        MsJoinBuilder<TLeft, TRigth>.JoinMake(Source, inner);
+        return this;
+    }
+
+    public MsSelectQueryBuilder<T> LeftJoin<TRigth>(Action<MsJoinBuilder<T, TRigth>> inner)
+        where TRigth : ITableBuilder
+    {
+        MsJoinBuilder<T, TRigth>.LeftJoinMake(Source, inner);
+        return this;
+    }
+
+    public MsSelectQueryBuilder<T> LeftJoin<TLeft, TRigth>(Action<MsJoinBuilder<TLeft, TRigth>> inner)
+        where TRigth : ITableBuilder
+        where TLeft : ITableBuilder
+    {
+        MsJoinBuilder<TLeft, TRigth>.LeftJoinMake(Source, inner);
         return this;
     }
 
@@ -78,4 +98,10 @@ public class MsSelectQueryBuilder<T> : QueryBuilderCore, IMsSelectQueryBuilder<T
 
     IMsSelectQueryBuilder<T> IMsSelectQueryBuilder<T>.Join<TRigth>(Action<IMsJoinBuilder<T, TRigth>> inner) 
         => Join<TRigth>(inner);
+
+    IMsSelectQueryBuilder<T> IMsSelectQueryBuilder<T>.LeftJoin<TRigth>(Action<IMsJoinBuilder<T, TRigth>> inner) 
+        => LeftJoin<TRigth>(inner);
+
+    IMsSelectQueryBuilder<T> IMsSelectQueryBuilder<T>.LeftJoin<TLeft, TRigth>(Action<IMsJoinBuilder<TLeft, TRigth>> inner) 
+        => LeftJoin(inner);
 }
