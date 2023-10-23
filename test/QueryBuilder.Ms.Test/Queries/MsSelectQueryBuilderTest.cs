@@ -39,7 +39,7 @@ public class MsSelectQueryBuilderTest
     }
 
     [Theory]
-    [InlineData("\r\nselect tc.* ,mtc.* \r\nfrom dbo.TestClass as tc\r\njoin dbo.MoreTestClass as mtc on tc.Id = mtc.Id\r\nwhere tc.Id = @0 and mtc.Age = @1")]
+    [InlineData("\r\nselect tc.* ,mtc.* \r\nfrom dbo.TestClass as tc\r\njoin dbo.MoreTestClass as mtc on tc.Id = mtc.Id\r\nwhere (tc.Id = @0 and mtc.Age >= @1 and mtc.Name is null)")]
     public void SelectJoin_TwoType_BuildSql(string expected)
     {
         var source = new QueryBuilderSource();
@@ -52,8 +52,14 @@ public class MsSelectQueryBuilderTest
             .Join<MoreTestClass>(x => x.EqualTo(x => x.Id, x => x.Id))
             .Where(x =>
             {
-                x.EqualTo(y => y.Id, Guid.Empty).And();
-                x.Bind<MoreTestClass>().EqualTo(y => y.Age, 1);
+                x.Bracket(() =>
+                {
+                    x.EqualTo(x => x.Id, Guid.Empty).And();
+                    x.Bind<MoreTestClass>().MoreEqualTo(x => x.Age, 1)
+                                           .And()
+                                           .IsNull(x => x.Name);
+                });
+                
             });
 
         Assert.Equal(expected, source.Query.ToString());

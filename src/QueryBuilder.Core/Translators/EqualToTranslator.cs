@@ -3,6 +3,7 @@ using QueryBuilder.Core.Queries;
 
 namespace QueryBuilder.Core.Translators;
 
+//TODO: Убрать object ?
 public readonly ref struct EqualToTranslator
 {
     private readonly string _column;

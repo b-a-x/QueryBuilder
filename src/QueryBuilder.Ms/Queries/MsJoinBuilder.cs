@@ -13,6 +13,7 @@ public interface IMsJoinBuilder<TLeft, TRigth>
     IMsJoinBuilder<TLeft, TRigth> EqualTo<TLeftField, TRigthField>([NotNull] Expression<Func<TLeft, TLeftField>> columnLeft, [NotNull] Expression<Func<TRigth, TRigthField>> columnRigth);
     IMsJoinBuilder<TLeft, TRigth> EqualTo(string columnLeft, string columnRigth);
     IMsJoinBuilder<TLeft, TRigth> And();
+    IMsJoinBuilder<TLeft, TRigth> Between<TLeftField, TRigthField>([NotNull] Expression<Func<TLeft, TLeftField>> columnLeft, [NotNull] Expression<Func<TRigth, TRigthField>> columnRigth);
 }
 
 public class MsJoinBuilder<TLeft, TRigth> : QueryBuilderCore, IMsJoinBuilder<TLeft, TRigth>
@@ -53,6 +54,11 @@ public class MsJoinBuilder<TLeft, TRigth> : QueryBuilderCore, IMsJoinBuilder<TLe
         return this;
     }
 
+    public MsJoinBuilder<TLeft, TRigth> Between<TLeftField, TRigthField>(Expression<Func<TLeft, TLeftField>> columnLeft, Expression<Func<TRigth, TRigthField>> columnRigth)
+    {
+        throw new NotImplementedException();
+    }
+
     public static MsJoinBuilder<TLeft, TRigth> JoinMake(QueryBuilderSource source, Action<MsJoinBuilder<TLeft, TRigth>> inner)
     {
         var obj = new MsJoinBuilder<TLeft, TRigth>(source).Join();
@@ -75,4 +81,9 @@ public class MsJoinBuilder<TLeft, TRigth> : QueryBuilderCore, IMsJoinBuilder<TLe
 
     IMsJoinBuilder<TLeft, TRigth> IMsJoinBuilder<TLeft, TRigth>.EqualTo(string columnLeft, string columnRigth) 
         => EqualTo(columnLeft, columnRigth);
+
+    IMsJoinBuilder<TLeft, TRigth> IMsJoinBuilder<TLeft, TRigth>.Between<TLeftField, TRigthField>(Expression<Func<TLeft, TLeftField>> columnLeft, Expression<Func<TRigth, TRigthField>> columnRigth)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using QueryBuilder.Core.Helpers;
 using QueryBuilder.Core.Queries;
+using System.Xml.Linq;
 
 namespace QueryBuilder.Ms.Test;
 
@@ -222,7 +223,7 @@ sub_tp_mtp.TP_ID
 		from Dict_ConsumerContract dc1
 		join Dict_HierLev1 h1 on h1.HierLev1_ID = dc1.HierLev1_ID
 		join Dict_Organization do1 on do1.Organization_ID = dc1.Organization_ID
-		left join Dict_ContractorType_Hist dct on dct.ConsumerContract_ID = dc1.ConsumerContract_ID and dct.FinishDate between dct.StartDate and dct.FinishDate
+		left join Dict_ContractorType_Hist dct on dct.ConsumerContract_ID = dc1.ConsumerContract_ID
 		left join Dict_ConsumerContract_Type dcct on dcct.ConsumerContract_Type_ID = dct.ContractorType_ID
 		left join Dict_ConsumerContract_SAP_Hist csap on dc1.ConsumerContract_SAP_ID = csap.ConsumerContract_SAP_ID
 		left join Dict_ConsumerContract_SAP csap1 on dc1.ConsumerContract_SAP_ID = csap1.ConsumerContract_SAP_ID
@@ -386,6 +387,8 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
     [InlineData("\r\nselect ti.* ,tio.MRid ,ps.StringName as PSName ,rt.Name as RegistrationTypeName ,h.HierLev1_ID ,h.HierLev2_ID ,h.HierLev3_ID ,h.HierLev1Name ,h.HierLev2Name ,h.HierLev3Name ,cc.COUNTRY_ID ,c.NAME as CountryName ,areas.ATSAreaName ,ais.ATSAISName \r\nfrom dbo.Info_TI_Hist as ti\r\njoin dbo.Info_TI as tio on ti.TI_ID = tio.TI_ID\r\njoin dbo.Dict_PS as ps on ti.PS_ID = ps.PS_ID\r\njoin dbo.Dict_TI_RegistrationTypes as rt on ti.RegistrationType = rt.RegistrationType\r\njoin dbo.Dict_TI_Types as tt on ti.TIType = tt.TIType\r\njoin dbo.Dict_Areas as areas on ti.ATSArea_ID = areas.ATSArea_ID\r\njoin dbo.Dict_AIS as ais on ti.ATSAIS_ID = ais.ATSAIS_ID\r\nleft join dbo.MGLEP_TI_COUNTRIES as cc on ti.TI_ID = cc.TI_ID\r\nleft join dbo.MGLEP_SPR_COUNTRIES as c on cc.COUNTRY_ID = c.ID\r\njoin dbo.v_Dict_Hier as h on ps.HierLev3_ID = h.HierLev3_ID")]
     public void MsQueryBuilder_Two_Build(string expected)
     {
+		DateTime from = DateTime.Now, to = DateTime.Now;
+
 		Action<IMsQueryBuilder> builder = b => b
 		.Select<Sub_dc_ec>(x =>
 		{
@@ -395,8 +398,47 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
 					{ 
 						x.All(); 
 					})
-					.From(x => x.Select<Dict_ConsumerContract>(x => x.Field(x => x.ConsumerContract_ID))
+					.From(x => x.Select<Dict_ConsumerContract>(x => 
+								{ 
+									x.Field(x => x.ConsumerContract_ID)
+                                     .Field(x => x.HierLev1_ID)
+                                     .Field(x => x.ContractNumber)
+                                     .Field(x => x.Organization_ID)
+                                     .Field(x => x.SignDate)
+                                     .Field(x => x.FinishDate)
+                                     .Field(x => x.Perspective)
+                                     .Field(x => x.TimeOffset)
+                                     .Field(x => x.OLD_ID)
+                                     .Field(x => x.Comment)
+                                     .Field(x => x.ConsumerContract_SAP_ID)
+                                     .Field(x => x.LastModifiedDate)
+                                     .Field(x => x.IsExistingContract);
+                                })
 								.From()
+								.Join<Dict_HierLev1>(x => x.EqualTo(x => x.HierLev1_ID, x => x.HierLev1_ID))
+								.Join<Dict_Organization>(x => x.EqualTo(x => x.Organization_ID, x => x.Organization_ID))
+								.LeftJoin<Dict_ConsumerContract_SAP_Hist>(x => x.EqualTo(x => x.ConsumerContract_SAP_ID, x => x.ConsumerContract_SAP_ID))
+                                .LeftJoin<Dict_ConsumerContract_SAP>(x => x.EqualTo(x => x.ConsumerContract_SAP_ID, x => x.ConsumerContract_SAP_ID))
+                                .LeftJoin<Dict_ContractorType_Hist>(x => x.EqualTo(x => x.ConsumerContract_ID, x => x.ConsumerContract_ID))
+								.LeftJoin<Dict_ConsumerContract_Type, Dict_ContractorType_Hist>(x => x.EqualTo(x => x.ConsumerContract_Type_ID, x => x.ConsumerContract_ID))
+								.Where(x =>
+								{
+									var csap = x.Bind<Dict_ConsumerContract_SAP_Hist>();
+                                    x.Bracket(() =>
+                                    {
+                                        x.MoreEqualTo(x => x.FinishDate, to).And();
+                                        csap.IsNull(x => x.ConsumerContract_SAP_ID);
+                                    })
+                                    .Or()
+                                    .Bracket(() =>
+                                    {
+                                        csap.IsNotNull(x => x.ConsumerContract_SAP_ID)
+                                            .And()
+                                            .LessEqualTo(x => x.StartDate, from)
+											.And()
+											.MoreEqualTo(x => x.FinishDate, to);
+                                    });
+								})
 						  )
 			  );
         
@@ -421,8 +463,64 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
 	public class Dict_ConsumerContract : ITableBuilder
     {
 		public int ConsumerContract_ID { get; set; }
-
+        public int HierLev1_ID { get; set; }
+        public int ContractNumber { get; set; }
+        public int Organization_ID { get; set; }
+        public int SignDate { get; set; }
+        public DateTime FinishDate { get; set; }
+        public int Perspective { get; set; }
+        public int TimeOffset { get; set; }
+        public int OLD_ID { get; set; }
+        public int Comment { get; set; }
+        public int ConsumerContract_SAP_ID { get; set; }
+        public int LastModifiedDate { get; set; }
+		public int IsExistingContract { get; set; }
         public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_ConsumerContract", "dc1");
+    }
+
+    public class Dict_HierLev1 : ITableBuilder
+    {
+		public int HierLev1_ID { get; set; }
+        public int StringName { get; set; }
+		public int SAP_ID { get; set; }
+		public int ShortCode { get; set; }
+
+        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_HierLev1", "h1");
+    }
+
+	public class Dict_Organization : ITableBuilder
+    {
+		public int Organization_ID { get; set; }
+        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_Organization", "do1");
+    }
+
+    public class Dict_ConsumerContract_Type : ITableBuilder
+    {
+		public int ContractorType_ID { get; set; }
+        public int ConsumerContract_Type_ID { get; set; }
+		public int ConsumerContract_Type_Name { get; set; }
+        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_ConsumerContract_Type", "dcct");
+    }
+
+	public class Dict_ContractorType_Hist : ITableBuilder
+    {
+		public int ContractorTypeVersion_ID { get; set; }
+		public int ConsumerContract_ID { get; set; }
+        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_ContractorType_Hist", "dct");
+    }
+
+	public class Dict_ConsumerContract_SAP_Hist : ITableBuilder
+    {
+		public DateTime StartDate { get; set; }
+		public DateTime FinishDate { get; set; }
+		public int ConsumerContract_SAP_ID { get; set; }
+        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_ConsumerContract_SAP_Hist", "csap");
+    }
+
+	public class Dict_ConsumerContract_SAP : ITableBuilder
+	{
+		public int ConsumerContract_SAP_ID { get; set; }
+        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_ConsumerContract_SAP", "csap1");
     }
 
     #endregion
