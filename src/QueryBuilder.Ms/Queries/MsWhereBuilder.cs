@@ -11,13 +11,16 @@ public interface IMsWhereBuilder<T>
     where T : ITableBuilder
 {
     IMsWhereBuilder<TDto> Bind<TDto>() where TDto : ITableBuilder;
+    IMsWhereBuilder<T> Column<TField>([NotNull] Expression<Func<T, TField>> column);
     IMsWhereBuilder<T> EqualTo<TField>([NotNull] Expression<Func<T, TField>> column, TField value);
     IMsWhereBuilder<T> MoreEqualTo<TField>([NotNull] Expression<Func<T, TField>> column, TField value);
     IMsWhereBuilder<T> LessEqualTo<TField>([NotNull] Expression<Func<T, TField>> column, TField value);
     IMsWhereBuilder<T> And();
     IMsWhereBuilder<T> Or();
     IMsWhereBuilder<T> Bracket(Action inner);
+    IMsWhereBuilder<T> IsNull();
     IMsWhereBuilder<T> IsNull<TField>([NotNull] Expression<Func<T, TField>> column);
+    IMsWhereBuilder<T> IsNotNull();
     IMsWhereBuilder<T> IsNotNull<TField>([NotNull] Expression<Func<T, TField>> column);
 }
 
@@ -75,15 +78,35 @@ public class MsWhereBuilder<T> : QueryBuilderCore, IMsWhereBuilder<T>
         return this;
     }
 
-    public MsWhereBuilder<T> IsNull<TField>([NotNull] Expression<Func<T, TField>> column)
+    public MsWhereBuilder<T> IsNull()
     {
-        new IsNullTranslator(CommonExpression.GetColumnName(column), T.GetTable()).Run(Source);
+        new IsNullTranslator().Run(Source);
         return this;
     }
 
-    public MsWhereBuilder<T> IsNotNull<TField>([NotNull] Expression<Func<T, TField>> column)
+    public MsWhereBuilder<T> IsNull<TField>(Expression<Func<T, TField>> column)
     {
-        new IsNotNullTranslator(CommonExpression.GetColumnName(column), T.GetTable()).Run(Source);
+        Column(column);
+        new IsNullTranslator().Run(Source);
+        return this;
+    }
+
+    public MsWhereBuilder<T> IsNotNull()
+    {
+        new IsNotNullTranslator().Run(Source);
+        return this;
+    }
+
+    public MsWhereBuilder<T> IsNotNull<TField>(Expression<Func<T, TField>> column)
+    {
+        Column(column);
+        new IsNotNullTranslator().Run(Source);
+        return this;
+    }
+
+    public MsWhereBuilder<T> Column<TField>(Expression<Func<T, TField>> column)
+    {
+        new ColumnTranslator(CommonExpression.GetColumnName(column), T.GetTable()).Run(Source);
         return this;
     }
 
@@ -117,15 +140,24 @@ public class MsWhereBuilder<T> : QueryBuilderCore, IMsWhereBuilder<T>
     IMsWhereBuilder<T> IMsWhereBuilder<T>.MoreEqualTo<TField>(Expression<Func<T, TField>> column, TField value) 
         => MoreEqualTo(column, value);
 
-    IMsWhereBuilder<T> IMsWhereBuilder<T>.IsNull<TField>(Expression<Func<T, TField>> column) 
-        => IsNull(column);
+    IMsWhereBuilder<T> IMsWhereBuilder<T>.IsNull() 
+        => IsNull();
 
     IMsWhereBuilder<T> IMsWhereBuilder<T>.Or() 
         => Or();
 
-    IMsWhereBuilder<T> IMsWhereBuilder<T>.IsNotNull<TField>(Expression<Func<T, TField>> column) 
-        => IsNotNull(column);
+    IMsWhereBuilder<T> IMsWhereBuilder<T>.IsNotNull() 
+        => IsNotNull();
 
     IMsWhereBuilder<T> IMsWhereBuilder<T>.LessEqualTo<TField>(Expression<Func<T, TField>> column, TField value) 
         => LessEqualTo(column, value);
+
+    IMsWhereBuilder<T> IMsWhereBuilder<T>.Column<TField>(Expression<Func<T, TField>> column) 
+        => Column(column);
+
+    IMsWhereBuilder<T> IMsWhereBuilder<T>.IsNull<TField>(Expression<Func<T, TField>> column) 
+        => IsNull(column);
+
+    IMsWhereBuilder<T> IMsWhereBuilder<T>.IsNotNull<TField>(Expression<Func<T, TField>> column) 
+        => IsNotNull(column);
 }

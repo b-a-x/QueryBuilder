@@ -1,5 +1,6 @@
 ﻿using QueryBuilder.Core.Helpers;
 using QueryBuilder.Core.Queries;
+using QueryBuilder.Core.Translators;
 using QueryBuilder.Ms.Translators;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
@@ -11,9 +12,10 @@ public interface IMsSelectBuilder<T>
 {
     IMsSelectBuilder<TDto> Bind<TDto>() where TDto : ITableBuilder;
     IMsSelectBuilder<T> All();
-    IMsSelectBuilder<T> Field<TField>([NotNull] Expression<Func<T, TField>> column);
-    IMsSelectBuilder<T> Field(string column);
+    IMsSelectBuilder<T> Column<TField>([NotNull] Expression<Func<T, TField>> column);
+    IMsSelectBuilder<T> Column(string column);
     IMsSelectBuilder<T> As(string value);
+    IMsSelectBuilder<T> IsNullFunc<TField>([NotNull] Expression<Func<T, TField>> column, TField value);
 }
 
 public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
@@ -25,6 +27,7 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
 
     public MsSelectBuilder<T> All()
     {
+        new CommaSelectTranslator().Run(Source);
         new AllTranslator(T.GetTable()).Run(Source);
         return this;
     }
@@ -35,15 +38,16 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
         return this;
     }
 
-    public MsSelectBuilder<T> Field<TField>(Expression<Func<T, TField>> column)
+    public MsSelectBuilder<T> Column<TField>(Expression<Func<T, TField>> column)
     {
-        new FieldTranslator(CommonExpression.GetColumnName(column), T.GetTable()).Run(Source);
+        Column(CommonExpression.GetColumnName(column));
         return this;
     }
 
-    public MsSelectBuilder<T> Field(string column)
+    public MsSelectBuilder<T> Column(string column)
     {
-        new FieldTranslator(column, T.GetTable()).Run(Source);
+        new CommaSelectTranslator().Run(Source);
+        new ColumnTranslator(column, T.GetTable()).Run(Source);
         return this;
     }
 
@@ -51,6 +55,13 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
         where TDto : ITableBuilder
     {
         return MsSelectBuilder<TDto>.Make(Source, null);
+    }
+
+    public MsSelectBuilder<T> IsNullFunc<TField>([NotNull] Expression<Func<T, TField>> column, TField value)
+    {
+        new CommaSelectTranslator().Run(Source);
+        new IsNullFuncTranslator(CommonExpression.GetColumnName(column), value, T.GetTable()).Run(Source);
+        return this;
     }
 
     public static MsSelectBuilder<T> Make(QueryBuilderSource source, Action<MsSelectBuilder<T>> inner)
@@ -63,8 +74,8 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
     IMsSelectBuilder<T> IMsSelectBuilder<T>.All()
         => All();
 
-    IMsSelectBuilder<T> IMsSelectBuilder<T>.Field<TField>(Expression<Func<T, TField>> column) 
-        => Field(column);
+    IMsSelectBuilder<T> IMsSelectBuilder<T>.Column<TField>(Expression<Func<T, TField>> column) 
+        => Column(column);
 
     IMsSelectBuilder<T> IMsSelectBuilder<T>.As(string value) 
         => As(value);
@@ -72,6 +83,9 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
     IMsSelectBuilder<TDto> IMsSelectBuilder<T>.Bind<TDto>() 
         => Bind<TDto>();
 
-    IMsSelectBuilder<T> IMsSelectBuilder<T>.Field(string column) 
-        => Field(column);
+    IMsSelectBuilder<T> IMsSelectBuilder<T>.Column(string column) 
+        => Column(column);
+
+    IMsSelectBuilder<T> IMsSelectBuilder<T>.IsNullFunc<TField>(Expression<Func<T, TField>> column, TField value) 
+        => IsNullFunc(column, value);
 }

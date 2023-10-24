@@ -33,19 +33,19 @@ public class MsQueryBuilderBenchmarck
         .Select<Info_TI_Hist>(x =>
         {
             x.All();
-            x.Bind<Info_TI>().Field(x => x.MRid);
-            x.Bind<Dict_PS>().Field(x => x.StringName).As("PSName");
-            x.Bind<Dict_TI_RegistrationTypes>().Field(x => x.Name).As("RegistrationTypeName");
-            x.Bind<v_Dict_Hier>().Field(x => x.HierLev1_ID)
-                                 .Field(x => x.HierLev2_ID)
-                                 .Field(x => x.HierLev3_ID)
-                                 .Field(x => x.HierLev1Name)
-                                 .Field(x => x.HierLev2Name)
-                                 .Field(x => x.HierLev3Name);
-            x.Bind<MGLEP_TI_COUNTRIES>().Field(x => x.COUNTRY_ID);
-            x.Bind<MGLEP_SPR_COUNTRIES>().Field(x => x.NAME).As("CountryName");
-            x.Bind<Dict_Areas>().Field(x => x.ATSAreaName);
-            x.Bind<Dict_AIS>().Field(x => x.ATSAISName);
+            x.Bind<Info_TI>().Column(x => x.MRid);
+            x.Bind<Dict_PS>().Column(x => x.StringName).As("PSName");
+            x.Bind<Dict_TI_RegistrationTypes>().Column(x => x.Name).As("RegistrationTypeName");
+            x.Bind<v_Dict_Hier>().Column(x => x.HierLev1_ID)
+                                 .Column(x => x.HierLev2_ID)
+                                 .Column(x => x.HierLev3_ID)
+                                 .Column(x => x.HierLev1Name)
+                                 .Column(x => x.HierLev2Name)
+                                 .Column(x => x.HierLev3Name);
+            x.Bind<MGLEP_TI_COUNTRIES>().Column(x => x.COUNTRY_ID);
+            x.Bind<MGLEP_SPR_COUNTRIES>().Column(x => x.NAME).As("CountryName");
+            x.Bind<Dict_Areas>().Column(x => x.ATSAreaName);
+            x.Bind<Dict_AIS>().Column(x => x.ATSAISName);
         })
         .Join<Info_TI>(x => x.EqualTo(x => x.TI_ID, x => x.TI_ID))
         .Join<Dict_PS>(x => x.EqualTo(x => x.PS_ID, x => x.PS_ID))
@@ -70,19 +70,19 @@ public class MsQueryBuilderBenchmarck
         .Select<Info_TI_Hist>(x =>
         {
             x.All();
-            x.Bind<Info_TI>().Field(nameof(Info_TI.MRid));
-            x.Bind<Dict_PS>().Field(nameof(Dict_PS.StringName)).As("PSName");
-            x.Bind<Dict_TI_RegistrationTypes>().Field(nameof(Dict_TI_RegistrationTypes.Name)).As("RegistrationTypeName");
-            x.Bind<v_Dict_Hier>().Field(nameof(v_Dict_Hier.HierLev1_ID))
-                                 .Field(nameof(v_Dict_Hier.HierLev2_ID))
-                                 .Field(nameof(v_Dict_Hier.HierLev3_ID))
-                                 .Field(nameof(v_Dict_Hier.HierLev1Name))
-                                 .Field(nameof(v_Dict_Hier.HierLev2Name))
-                                 .Field(nameof(v_Dict_Hier.HierLev3Name));
-            x.Bind<MGLEP_TI_COUNTRIES>().Field(nameof(MGLEP_TI_COUNTRIES.COUNTRY_ID));
-            x.Bind<MGLEP_SPR_COUNTRIES>().Field(nameof(MGLEP_SPR_COUNTRIES.NAME)).As("CountryName");
-            x.Bind<Dict_Areas>().Field(nameof(Dict_Areas.ATSAreaName));
-            x.Bind<Dict_AIS>().Field(nameof(Dict_AIS.ATSAISName));
+            x.Bind<Info_TI>().Column(nameof(Info_TI.MRid));
+            x.Bind<Dict_PS>().Column(nameof(Dict_PS.StringName)).As("PSName");
+            x.Bind<Dict_TI_RegistrationTypes>().Column(nameof(Dict_TI_RegistrationTypes.Name)).As("RegistrationTypeName");
+            x.Bind<v_Dict_Hier>().Column(nameof(v_Dict_Hier.HierLev1_ID))
+                                 .Column(nameof(v_Dict_Hier.HierLev2_ID))
+                                 .Column(nameof(v_Dict_Hier.HierLev3_ID))
+                                 .Column(nameof(v_Dict_Hier.HierLev1Name))
+                                 .Column(nameof(v_Dict_Hier.HierLev2Name))
+                                 .Column(nameof(v_Dict_Hier.HierLev3Name));
+            x.Bind<MGLEP_TI_COUNTRIES>().Column(nameof(MGLEP_TI_COUNTRIES.COUNTRY_ID));
+            x.Bind<MGLEP_SPR_COUNTRIES>().Column(nameof(MGLEP_SPR_COUNTRIES.NAME)).As("CountryName");
+            x.Bind<Dict_Areas>().Column(nameof(Dict_Areas.ATSAreaName));
+            x.Bind<Dict_AIS>().Column(nameof(Dict_AIS.ATSAISName));
         })
         .Join<Info_TI>(x => x.EqualTo(nameof(Info_TI_Hist.TI_ID), nameof(Info_TI.TI_ID)))
         .Join<Dict_PS>(x => x.EqualTo(nameof(Info_TI_Hist.PS_ID), nameof(Dict_PS.PS_ID)))
@@ -107,19 +107,19 @@ public class MsQueryBuilderBenchmarck
         .Select<Info_TI_Hist>(x =>
         {
             x.All();
-            x.Bind<Info_TI>().Field("MRid");
-            x.Bind<Dict_PS>().Field("StringName").As("PSName");
-            x.Bind<Dict_TI_RegistrationTypes>().Field("Name").As("RegistrationTypeName");
-            x.Bind<v_Dict_Hier>().Field("HierLev1_ID")
-                                 .Field("HierLev2_ID")
-                                 .Field("HierLev3_ID")
-                                 .Field("HierLev1Name")
-                                 .Field("HierLev2Name")
-                                 .Field("HierLev3Name");
-            x.Bind<MGLEP_TI_COUNTRIES>().Field("COUNTRY_ID");
-            x.Bind<MGLEP_SPR_COUNTRIES>().Field("NAME").As("CountryName");
-            x.Bind<Dict_Areas>().Field("ATSAreaName");
-            x.Bind<Dict_AIS>().Field("ATSAISName");
+            x.Bind<Info_TI>().Column("MRid");
+            x.Bind<Dict_PS>().Column("StringName").As("PSName");
+            x.Bind<Dict_TI_RegistrationTypes>().Column("Name").As("RegistrationTypeName");
+            x.Bind<v_Dict_Hier>().Column("HierLev1_ID")
+                                 .Column("HierLev2_ID")
+                                 .Column("HierLev3_ID")
+                                 .Column("HierLev1Name")
+                                 .Column("HierLev2Name")
+                                 .Column("HierLev3Name");
+            x.Bind<MGLEP_TI_COUNTRIES>().Column("COUNTRY_ID");
+            x.Bind<MGLEP_SPR_COUNTRIES>().Column("NAME").As("CountryName");
+            x.Bind<Dict_Areas>().Column("ATSAreaName");
+            x.Bind<Dict_AIS>().Column("ATSAISName");
         })
         .Join<Info_TI>(x => x.EqualTo("TI_ID", "TI_ID"))
         .Join<Dict_PS>(x => x.EqualTo("PS_ID", "PS_ID"))

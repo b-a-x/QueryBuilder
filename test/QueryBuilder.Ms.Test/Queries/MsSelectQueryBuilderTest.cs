@@ -10,7 +10,7 @@ public class MsSelectQueryBuilderTest
     public void Select_BuildSql(string expected)
     {
         var source = new QueryBuilderSource();
-        new MsSelectQueryBuilder<TestClass>(source).Select(x => x.All().Field(x => x.Id).As("qwe")).From();
+        new MsSelectQueryBuilder<TestClass>(source).Select(x => x.All().Column(x => x.Id).As("qwe")).From();
         Assert.Equal(expected, source.Query.ToString());
     }
 

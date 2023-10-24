@@ -39,19 +39,19 @@ public class MsQueryBuilderTests
         .Select<Info_TI_Hist>(x =>
         {
             x.All();
-            x.Bind<Info_TI>().Field(x => x.MRid);
-            x.Bind<Dict_PS>().Field(x => x.StringName).As("PSName");
-            x.Bind<Dict_TI_RegistrationTypes>().Field(x => x.Name).As("RegistrationTypeName");
-            x.Bind<v_Dict_Hier>().Field(x => x.HierLev1_ID)
-                                 .Field(x => x.HierLev2_ID)
-                                 .Field(x => x.HierLev3_ID)
-                                 .Field(x => x.HierLev1Name)
-                                 .Field(x => x.HierLev2Name)
-                                 .Field(x => x.HierLev3Name);
-            x.Bind<MGLEP_TI_COUNTRIES>().Field(x => x.COUNTRY_ID);
-            x.Bind<MGLEP_SPR_COUNTRIES>().Field(x => x.NAME).As("CountryName");
-            x.Bind<Dict_Areas>().Field(x => x.ATSAreaName);
-            x.Bind<Dict_AIS>().Field(x => x.ATSAISName);
+            x.Bind<Info_TI>().Column(x => x.MRid);
+            x.Bind<Dict_PS>().Column(x => x.StringName).As("PSName");
+            x.Bind<Dict_TI_RegistrationTypes>().Column(x => x.Name).As("RegistrationTypeName");
+            x.Bind<v_Dict_Hier>().Column(x => x.HierLev1_ID)
+                                 .Column(x => x.HierLev2_ID)
+                                 .Column(x => x.HierLev3_ID)
+                                 .Column(x => x.HierLev1Name)
+                                 .Column(x => x.HierLev2Name)
+                                 .Column(x => x.HierLev3Name);
+            x.Bind<MGLEP_TI_COUNTRIES>().Column(x => x.COUNTRY_ID);
+            x.Bind<MGLEP_SPR_COUNTRIES>().Column(x => x.NAME).As("CountryName");
+            x.Bind<Dict_Areas>().Column(x => x.ATSAreaName);
+            x.Bind<Dict_AIS>().Column(x => x.ATSAISName);
         })
 		.From()
         .Join<Info_TI>(x => x.EqualTo(x => x.TI_ID, x => x.TI_ID))
@@ -384,12 +384,13 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
     #endregion
 
     [Theory]
-    [InlineData("\r\nselect ti.* ,tio.MRid ,ps.StringName as PSName ,rt.Name as RegistrationTypeName ,h.HierLev1_ID ,h.HierLev2_ID ,h.HierLev3_ID ,h.HierLev1Name ,h.HierLev2Name ,h.HierLev3Name ,cc.COUNTRY_ID ,c.NAME as CountryName ,areas.ATSAreaName ,ais.ATSAISName \r\nfrom dbo.Info_TI_Hist as ti\r\njoin dbo.Info_TI as tio on ti.TI_ID = tio.TI_ID\r\njoin dbo.Dict_PS as ps on ti.PS_ID = ps.PS_ID\r\njoin dbo.Dict_TI_RegistrationTypes as rt on ti.RegistrationType = rt.RegistrationType\r\njoin dbo.Dict_TI_Types as tt on ti.TIType = tt.TIType\r\njoin dbo.Dict_Areas as areas on ti.ATSArea_ID = areas.ATSArea_ID\r\njoin dbo.Dict_AIS as ais on ti.ATSAIS_ID = ais.ATSAIS_ID\r\nleft join dbo.MGLEP_TI_COUNTRIES as cc on ti.TI_ID = cc.TI_ID\r\nleft join dbo.MGLEP_SPR_COUNTRIES as c on cc.COUNTRY_ID = c.ID\r\njoin dbo.v_Dict_Hier as h on ps.HierLev3_ID = h.HierLev3_ID")]
+    [InlineData("")]
     public void MsQueryBuilder_Two_Build(string expected)
     {
 		DateTime from = DateTime.Now, to = DateTime.Now;
+		var str = string.Empty;
 
-		Action<IMsQueryBuilder> builder = b => b
+        Action<IMsQueryBuilder> builder = b => b
 		.Select<Sub_dc_ec>(x =>
 		{
 			x.All();
@@ -400,19 +401,31 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
 					})
 					.From(x => x.Select<Dict_ConsumerContract>(x => 
 								{ 
-									x.Field(x => x.ConsumerContract_ID)
-                                     .Field(x => x.HierLev1_ID)
-                                     .Field(x => x.ContractNumber)
-                                     .Field(x => x.Organization_ID)
-                                     .Field(x => x.SignDate)
-                                     .Field(x => x.FinishDate)
-                                     .Field(x => x.Perspective)
-                                     .Field(x => x.TimeOffset)
-                                     .Field(x => x.OLD_ID)
-                                     .Field(x => x.Comment)
-                                     .Field(x => x.ConsumerContract_SAP_ID)
-                                     .Field(x => x.LastModifiedDate)
-                                     .Field(x => x.IsExistingContract);
+									x.Column(x => x.ConsumerContract_ID)
+                                     .Column(x => x.HierLev1_ID)
+                                     .Column(x => x.ContractNumber)
+                                     .Column(x => x.Organization_ID)
+                                     .Column(x => x.SignDate)
+                                     .Column(x => x.FinishDate)
+                                     .Column(x => x.Perspective)
+                                     .Column(x => x.TimeOffset)
+                                     .Column(x => x.OLD_ID)
+                                     .Column(x => x.Comment)
+                                     .Column(x => x.ConsumerContract_SAP_ID)
+                                     .Column(x => x.LastModifiedDate)
+                                     .Column(x => x.IsExistingContract);
+									x.Bind<Dict_HierLev1>()
+									 .Column(x => x.StringName).As("HierLev1Name")
+									 .Column(x => x.SAP_ID).As("HierLev1_SAP_ID")
+									 .Column(x => x.ShortCode);
+									x.Bind<Dict_ContractorType_Hist>()
+									 .Column(x => x.ContractorTypeVersion_ID);
+									x.Bind<Dict_ConsumerContract_Type>()
+									 .Column(x => x.ConsumerContract_Type_ID)
+									 .Column(x => x.ConsumerContract_Type_Name);
+									x.Bind<Dict_ConsumerContract_SAP_Hist>()
+									 .Column(x => x.ContractStatus).As("ConsumerContract_SAP_Status")
+									 .IsNullFunc(x => x.SAP_ID, str).As("SAP_ID");
                                 })
 								.From()
 								.Join<Dict_HierLev1>(x => x.EqualTo(x => x.HierLev1_ID, x => x.HierLev1_ID))
@@ -423,10 +436,11 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
 								.LeftJoin<Dict_ConsumerContract_Type, Dict_ContractorType_Hist>(x => x.EqualTo(x => x.ConsumerContract_Type_ID, x => x.ConsumerContract_ID))
 								.Where(x =>
 								{
-									var csap = x.Bind<Dict_ConsumerContract_SAP_Hist>();
+                                    var csap = x.Bind<Dict_ConsumerContract_SAP_Hist>();
                                     x.Bracket(() =>
                                     {
-                                        x.MoreEqualTo(x => x.FinishDate, to).And();
+										x.MoreEqualTo(x => x.FinishDate, to)
+										 .And();
                                         csap.IsNull(x => x.ConsumerContract_SAP_ID);
                                     })
                                     .Or()
@@ -511,7 +525,9 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
 
 	public class Dict_ConsumerContract_SAP_Hist : ITableBuilder
     {
-		public DateTime StartDate { get; set; }
+		public string SAP_ID { get; set; }
+        public int ContractStatus { get; set; }
+        public DateTime StartDate { get; set; }
 		public DateTime FinishDate { get; set; }
 		public int ConsumerContract_SAP_ID { get; set; }
         public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_ConsumerContract_SAP_Hist", "csap");
