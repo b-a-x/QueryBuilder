@@ -425,7 +425,17 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
 									 .Column(x => x.ConsumerContract_Type_Name);
 									x.Bind<Dict_ConsumerContract_SAP_Hist>()
 									 .Column(x => x.ContractStatus).As("ConsumerContract_SAP_Status")
-									 .IsNullFunc(x => x.SAP_ID, str).As("SAP_ID");
+									 .IsNullFunc(x => x.SAP_ID, str).As("SAP_ID")
+									 .Column(x => x.EDF);
+									x.Bind<Dict_ConsumerContract_SAP>()
+									 .Column(x => x.NSIQualityStatus).As("ConsumerContract_SAP_NSIQualityStatus")
+									 .Column(x => x.MRid).As("ConsumerContract_MRid");
+                                    /*
+									 ,(case
+			when csap.SAP_ID is null then 0
+			else 1
+		end) as HasSAP_ID
+									 */
                                 })
 								.From()
 								.Join<Dict_HierLev1>(x => x.EqualTo(x => x.HierLev1_ID, x => x.HierLev1_ID))
@@ -530,12 +540,15 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
         public DateTime StartDate { get; set; }
 		public DateTime FinishDate { get; set; }
 		public int ConsumerContract_SAP_ID { get; set; }
+		public int EDF { get; set; }
         public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_ConsumerContract_SAP_Hist", "csap");
     }
 
 	public class Dict_ConsumerContract_SAP : ITableBuilder
 	{
-		public int ConsumerContract_SAP_ID { get; set; }
+		public int MRid { get; set; }
+        public int NSIQualityStatus { get; set; }
+        public int ConsumerContract_SAP_ID { get; set; }
         public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_ConsumerContract_SAP", "csap1");
     }
 
