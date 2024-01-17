@@ -57,7 +57,7 @@ public class MsQueryBuilderBenchmarck
         .LeftJoin<MGLEP_TI_COUNTRIES, MGLEP_SPR_COUNTRIES>(x => x.EqualTo(x => x.COUNTRY_ID, x => x.ID))
         .Join<Dict_PS, v_Dict_Hier>(x => x.EqualTo(x => x.HierLev3_ID, x => x.HierLev3_ID));
 
-        var source = new QueryBuilderSource();
+        var source = new QueryBuilderContext();
         builder(new MsQueryBuilder(source));
 
         return source.Query.ToString();
@@ -94,7 +94,7 @@ public class MsQueryBuilderBenchmarck
         .LeftJoin<MGLEP_TI_COUNTRIES, MGLEP_SPR_COUNTRIES>(x => x.EqualTo(nameof(MGLEP_TI_COUNTRIES.COUNTRY_ID), nameof(MGLEP_SPR_COUNTRIES.ID)))
         .Join<Dict_PS, v_Dict_Hier>(x => x.EqualTo(nameof(Dict_PS.HierLev3_ID), nameof(v_Dict_Hier.HierLev3_ID)));
 
-        var source = new QueryBuilderSource();
+        var source = new QueryBuilderContext();
         builder(new MsQueryBuilder(source));
 
         return source.Query.ToString();
@@ -131,7 +131,7 @@ public class MsQueryBuilderBenchmarck
         .LeftJoin<MGLEP_TI_COUNTRIES, MGLEP_SPR_COUNTRIES>(x => x.EqualTo("COUNTRY_ID", "ID"))
         .Join<Dict_PS, v_Dict_Hier>(x => x.EqualTo("HierLev3_ID", "HierLev3_ID"));
 
-        var source = new QueryBuilderSource();
+        var source = new QueryBuilderContext();
         builder(new MsQueryBuilder(source));
 
         return source.Query.ToString();
@@ -183,7 +183,7 @@ public class MsQueryBuilderBenchmarck
     }
 }
 
-public class Info_TI_Hist : ITableBuilder
+public class Info_TI_Hist : IHasTable
 {
     public int ATSAIS_ID { get; set; }
     public int ATSArea_ID { get; set; }
@@ -191,23 +191,23 @@ public class Info_TI_Hist : ITableBuilder
     public int RegistrationType { get; set; }
     public int PS_ID { get; set; }
     public int TI_ID { get; set; }
-    public static TableBuilder GetTable() => new TableBuilder("dbo", "Info_TI_Hist", "ti");
+    public static Table GetTable() => new Table("dbo", "Info_TI_Hist", "ti");
 }
-public class Info_TI : ITableBuilder
+public class Info_TI : IHasTable
 {
     public int MRid { get; set; }
     public int TI_ID { get; set; }
-    public static TableBuilder GetTable() => new TableBuilder("dbo", "Info_TI", "tio");
+    public static Table GetTable() => new Table("dbo", "Info_TI", "tio");
 }
-public class Dict_PS : ITableBuilder
+public class Dict_PS : IHasTable
 {
     public int PS_ID { get; set; }
     public int StringName { get; set; }
     public int HierLev3_ID { get; set; }
-    public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_PS", "ps");
+    public static Table GetTable() => new Table("dbo", "Dict_PS", "ps");
 }
 
-public class v_Dict_Hier : ITableBuilder
+public class v_Dict_Hier : IHasTable
 {
     public int HierLev1_ID { get; set; }
     public int HierLev2_ID { get; set; }
@@ -215,47 +215,47 @@ public class v_Dict_Hier : ITableBuilder
     public int HierLev1Name { get; set; }
     public int HierLev2Name { get; set; }
     public int HierLev3Name { get; set; }
-    public static TableBuilder GetTable() => new TableBuilder("dbo", "v_Dict_Hier", "h");
+    public static Table GetTable() => new Table("dbo", "v_Dict_Hier", "h");
 }
 
-public class Dict_TI_RegistrationTypes : ITableBuilder
+public class Dict_TI_RegistrationTypes : IHasTable
 {
     public int Name { get; set; }
     public int RegistrationType { get; set; }
-    public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_TI_RegistrationTypes", "rt");
+    public static Table GetTable() => new Table("dbo", "Dict_TI_RegistrationTypes", "rt");
 }
 
-public class Dict_TI_Types : ITableBuilder
+public class Dict_TI_Types : IHasTable
 {
     public int StringName { get; set; }
     public int TIType { get; set; }
-    public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_TI_Types", "tt");
+    public static Table GetTable() => new Table("dbo", "Dict_TI_Types", "tt");
 }
 
-public class MGLEP_TI_COUNTRIES : ITableBuilder
+public class MGLEP_TI_COUNTRIES : IHasTable
 {
     public int COUNTRY_ID { get; set; }
     public int TI_ID { get; set; }
-    public static TableBuilder GetTable() => new TableBuilder("dbo", "MGLEP_TI_COUNTRIES", "cc");
+    public static Table GetTable() => new Table("dbo", "MGLEP_TI_COUNTRIES", "cc");
 }
 
-public class MGLEP_SPR_COUNTRIES : ITableBuilder
+public class MGLEP_SPR_COUNTRIES : IHasTable
 {
     public int ID { get; set; }
     public int NAME { get; set; }
-    public static TableBuilder GetTable() => new TableBuilder("dbo", "MGLEP_SPR_COUNTRIES", "c");
+    public static Table GetTable() => new Table("dbo", "MGLEP_SPR_COUNTRIES", "c");
 }
 
-public class Dict_Areas : ITableBuilder
+public class Dict_Areas : IHasTable
 {
     public int ATSArea_ID { get; set; }
     public int ATSAreaName { get; set; }
-    public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_Areas", "areas");
+    public static Table GetTable() => new Table("dbo", "Dict_Areas", "areas");
 }
 
-public class Dict_AIS : ITableBuilder
+public class Dict_AIS : IHasTable
 {
     public int ATSAIS_ID { get; set; }
     public int ATSAISName { get; set; }
-    public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_AIS", "ais");
+    public static Table GetTable() => new Table("dbo", "Dict_AIS", "ais");
 }

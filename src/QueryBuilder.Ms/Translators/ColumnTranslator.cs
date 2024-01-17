@@ -6,17 +6,17 @@ namespace QueryBuilder.Ms.Translators;
 public readonly ref struct ColumnTranslator
 {
     private readonly string _field;
-    private readonly TableBuilder _table;
+    private readonly Table _table;
 
-    public ColumnTranslator(string field, TableBuilder table)
+    public ColumnTranslator(string field, Table table)
     {
         _field = field;
         _table = table;
     }
 
-    public void Run(QueryBuilderSource source)
+    public void Run(QueryBuilderContext source)
     {
-        if (string.IsNullOrEmpty(_table.TableName))
+        if (string.IsNullOrEmpty(_table.Name))
             throw new Exception("not used interface");
 
         source.Query.Append(_table.Alias).Append(".").Append(_field).Append(" ");

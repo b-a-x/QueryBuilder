@@ -10,8 +10,8 @@ public class TableTranslatorTest
     [InlineData("\r\ntest test.TestClass as tc")]
     public void Table_BuildTableAndSchemaAndAlias(string expected)
     {
-        var source = new QueryBuilderSource();
-        new TableTranslator("test", new TableBuilder("test", "TestClass", "tc")).Run(source);
+        var source = new QueryBuilderContext();
+        new TableTranslator("test", new Table("test", "TestClass", "tc")).Run(source);
         Assert.Equal(expected, source.Query.ToString());
     }
 }

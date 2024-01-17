@@ -2,17 +2,17 @@
 
 namespace QueryBuilder.Ms.Test;
 
-public class TestClass : ITableBuilder
+public class TestClass : IHasTable
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
     public int? Age { get; set; }
     public DateTime Timespan { get; set; }
 
-    public static TableBuilder GetTable() => new TableBuilder("dbo", "TestClass", "tc");
+    public static Table GetTable() => new Table("dbo", "TestClass", "tc");
 }
 
-public class MoreTestClass : TestClass, ITableBuilder
+public class MoreTestClass : TestClass, IHasTable
 {
-    public new static TableBuilder GetTable() => new TableBuilder("dbo", "MoreTestClass", "mtc");
+    public new static Table GetTable() => new Table("dbo", "MoreTestClass", "mtc");
 }

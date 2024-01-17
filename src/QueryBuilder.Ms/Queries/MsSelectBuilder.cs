@@ -8,9 +8,9 @@ using System.Linq.Expressions;
 namespace QueryBuilder.Ms.Queries;
 
 public interface IMsSelectBuilder<T>
-    where T : ITableBuilder
+    where T : IHasTable
 {
-    IMsSelectBuilder<TDto> Bind<TDto>() where TDto : ITableBuilder;
+    IMsSelectBuilder<TDto> Bind<TDto>() where TDto : IHasTable;
     IMsSelectBuilder<T> All();
     IMsSelectBuilder<T> Column<TField>([NotNull] Expression<Func<T, TField>> column);
     IMsSelectBuilder<T> Column(string column);
@@ -19,20 +19,20 @@ public interface IMsSelectBuilder<T>
 }
 
 public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
-    where T : ITableBuilder
+    where T : IHasTable
 {
-    public MsSelectBuilder(QueryBuilderSource source) : base(source) {}
+    public MsSelectBuilder(QueryBuilderContext source) : base(source) {}
 
     public IMsSelectBuilder<T> All()
     {
-        new CommaSelectTranslator().Run(Source);
-        new AllTranslator(T.GetTable()).Run(Source);
+        new CommaSelectTranslator().Run(Context);
+        new AllTranslator(T.GetTable()).Run(Context);
         return this;
     }
 
     public IMsSelectBuilder<T> As(string value)
     {
-        new AsTranslator(value).Run(Source);
+        new AsTranslator(value).Run(Context);
         return this;
     }
 
@@ -44,25 +44,24 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
 
     public IMsSelectBuilder<T> Column(string column)
     {
-        new CommaSelectTranslator().Run(Source);
-        new ColumnTranslator(column, T.GetTable()).Run(Source);
+        new CommaSelectTranslator().Run(Context);
+        new ColumnTranslator(column, T.GetTable()).Run(Context);
         return this;
     }
 
-    public IMsSelectBuilder<TDto> Bind<TDto>() 
-        where TDto : ITableBuilder
+    public IMsSelectBuilder<TDto> Bind<TDto>() where TDto : IHasTable
     {
-        return MsSelectBuilder<TDto>.Make(Source, null);
+        return MsSelectBuilder<TDto>.Make(Context);
     }
 
     public IMsSelectBuilder<T> IsNullFunc<TField>([NotNull] Expression<Func<T, TField>> column, TField value)
     {
-        new CommaSelectTranslator().Run(Source);
-        new IsNullFuncTranslator(CommonExpression.GetColumnName(column), value, T.GetTable()).Run(Source);
+        new CommaSelectTranslator().Run(Context);
+        new IsNullFuncTranslator(CommonExpression.GetColumnName(column), value, T.GetTable()).Run(Context);
         return this;
     }
 
-    public static MsSelectBuilder<T> Make(QueryBuilderSource source, Action<MsSelectBuilder<T>> inner)
+    public static MsSelectBuilder<T> Make(QueryBuilderContext source, Action<MsSelectBuilder<T>>? inner = null)
     {
         var obj = new MsSelectBuilder<T>(source);
         inner?.Invoke(obj);

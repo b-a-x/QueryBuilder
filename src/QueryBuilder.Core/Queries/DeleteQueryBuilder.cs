@@ -4,5 +4,5 @@ public interface IDeleteQueryBuilder<T> { }
 
 public class DeleteQueryBuilder<T> : QueryBuilderCore, IDeleteQueryBuilder<T>
 {
-    public DeleteQueryBuilder(QueryBuilderSource source) : base(source) {}
+    public DeleteQueryBuilder(QueryBuilderContext source) : base(source) {}
 }

@@ -4,7 +4,7 @@ namespace QueryBuilder.Core.Translators;
 
 public readonly ref struct OrTranslator
 {
-    public void Run(QueryBuilderSource source)
+    public void Run(QueryBuilderContext source)
     {
         source.Query.Append(" or ");
     }

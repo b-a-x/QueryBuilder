@@ -6,13 +6,13 @@ namespace QueryBuilder.Ms;
 
 public partial class MsQueryBuilder : Core.QueryBuilder
 {
-    public MsQueryBuilder(QueryBuilderSource source) : base(source) { }
+    public MsQueryBuilder(QueryBuilderContext source) : base(source) { }
 
     public MsDeleteQueryBuilder<T> Delete<T>()
-        where T : ITableBuilder
-        => MsDeleteQueryBuilder<T>.Make(Source).Delete();
+        where T : IHasTable
+        => MsDeleteQueryBuilder<T>.Make(Context).Delete();
 
     public MsSelectQueryBuilder<T> Select<T>(Action<MsSelectBuilder<T>> inner)
-        where T : ITableBuilder 
-        => MsSelectQueryBuilder<T>.Make(Source, null).Select(inner);
+        where T : IHasTable 
+        => MsSelectQueryBuilder<T>.Make(Context, null).Select(inner);
 }

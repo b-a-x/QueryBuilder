@@ -4,5 +4,5 @@ public interface IWhereBuilder<T> { }
 
 public class WhereQueryBuilder<T> : QueryBuilderCore, IWhereBuilder<T>
 {
-    public WhereQueryBuilder(QueryBuilderSource source) : base(source) { }
+    public WhereQueryBuilder(QueryBuilderContext source) : base(source) { }
 }

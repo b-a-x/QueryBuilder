@@ -7,7 +7,7 @@ namespace QueryBuilder.Ms;
 public interface IMsQueryBuilder : IQueryBuilder, ISelect
 {
     IMsDeleteQueryBuilder<T> Delete<T>() 
-        where T : ITableBuilder;
+        where T : IHasTable;
 }
 
 public partial class MsQueryBuilder : IMsQueryBuilder

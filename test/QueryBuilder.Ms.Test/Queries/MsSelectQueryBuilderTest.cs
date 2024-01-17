@@ -9,7 +9,7 @@ public class MsSelectQueryBuilderTest
     [InlineData("\r\nselect tc.* ,tc.Id as qwe \r\nfrom dbo.TestClass as tc")]
     public void Select_BuildSql(string expected)
     {
-        var source = new QueryBuilderSource();
+        var source = new QueryBuilderContext();
         new MsSelectQueryBuilder<TestClass>(source).Select(x => x.All().Column(x => x.Id).As("qwe")).From();
         Assert.Equal(expected, source.Query.ToString());
     }
@@ -18,7 +18,7 @@ public class MsSelectQueryBuilderTest
     [InlineData("\r\nselect tc.* \r\nfrom dbo.TestClass as tc\r\nselect tc.* \r\nfrom dbo.TestClass as tc")]
     public void DoubleSelect_BuildSql(string expected)
     {
-        var source = new QueryBuilderSource();
+        var source = new QueryBuilderContext();
         new MsSelectQueryBuilder<TestClass>(source).Select(x => x.All()).From().Select(x => x.All()).From();
         Assert.Equal(expected, source.Query.ToString());
     }
@@ -27,7 +27,7 @@ public class MsSelectQueryBuilderTest
     [InlineData("\r\nselect tc.* \r\nfrom dbo.TestClass as tc\r\nwhere tc.Id = @0 and tc.Name = @1 and tc.Age = @2 and tc.Timespan = @3")]
     public void SelectWhere_BuildSql(string expected)
     {
-        var source = new QueryBuilderSource();
+        var source = new QueryBuilderContext();
         new MsSelectQueryBuilder<TestClass>(source)
            .Select(x => x.All())
            .From()
@@ -42,7 +42,7 @@ public class MsSelectQueryBuilderTest
     [InlineData("\r\nselect tc.* ,mtc.* \r\nfrom dbo.TestClass as tc\r\njoin dbo.MoreTestClass as mtc on tc.Id = mtc.Id\r\nwhere (tc.Id = @0 and mtc.Age >= @1 and mtc.Name is null)")]
     public void SelectJoin_TwoType_BuildSql(string expected)
     {
-        var source = new QueryBuilderSource();
+        var source = new QueryBuilderContext();
         new MsSelectQueryBuilder<TestClass>(source)
             .Select(x => { 
                 x.All();

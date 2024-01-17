@@ -5,18 +5,18 @@ namespace QueryBuilder.Ms.Translators;
 
 public readonly ref struct FromTranslator
 {
-    private readonly TableBuilder _table;
-    public FromTranslator(TableBuilder table)
+    private readonly Table _table;
+    public FromTranslator(Table table)
     {
         _table = table;
     }
 
-    public void BeginRun(QueryBuilderSource source)
+    public void BeginRun(QueryBuilderContext source)
     {
         source.Query.Append("\r\n").Append("from (");
     }
 
-    public void EndRun(QueryBuilderSource source)
+    public void EndRun(QueryBuilderContext source)
     {
         source.Query.Append("\r\n").Append(") ").Append(_table.Alias);
     }

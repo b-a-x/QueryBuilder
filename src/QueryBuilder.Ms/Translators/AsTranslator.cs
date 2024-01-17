@@ -10,7 +10,7 @@ public readonly ref struct AsTranslator
         _value = value;
     }
 
-    public void Run(QueryBuilderSource source)
+    public void Run(QueryBuilderContext source)
     {
         source.Query.Append("as ").Append(_value).Append(" ");
     }

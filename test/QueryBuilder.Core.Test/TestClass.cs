@@ -1,5 +1,4 @@
-﻿using QueryBuilder.Core.Helpers;
-namespace QueryBuilder.Core.Test;
+﻿namespace QueryBuilder.Core.Test;
 
 public class TestClass
 {

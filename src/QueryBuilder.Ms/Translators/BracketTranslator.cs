@@ -4,12 +4,12 @@ namespace QueryBuilder.Ms.Translators;
 
 public readonly ref struct BracketTranslator
 {
-    public void BeforeRun(QueryBuilderSource source)
+    public void BeforeRun(QueryBuilderContext source)
     {
         source.Query.Append("(");
     }
 
-    public void AfterRun(QueryBuilderSource source) 
+    public void AfterRun(QueryBuilderContext source) 
     {
         source.Query.Append(")");
     }

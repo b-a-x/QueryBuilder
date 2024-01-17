@@ -7,8 +7,8 @@ using System.Linq.Expressions;
 namespace QueryBuilder.Ms.Queries;
 
 public interface IMsJoinBuilder<TLeft, TRigth>
-    where TLeft : ITableBuilder
-    where TRigth : ITableBuilder
+    where TLeft : IHasTable
+    where TRigth : IHasTable
 {
     IMsJoinBuilder<TLeft, TRigth> EqualTo<TLeftField, TRigthField>([NotNull] Expression<Func<TLeft, TLeftField>> columnLeft, [NotNull] Expression<Func<TRigth, TRigthField>> columnRigth);
     IMsJoinBuilder<TLeft, TRigth> EqualTo(string columnLeft, string columnRigth);
@@ -17,40 +17,40 @@ public interface IMsJoinBuilder<TLeft, TRigth>
 }
 
 public class MsJoinBuilder<TLeft, TRigth> : QueryBuilderCore, IMsJoinBuilder<TLeft, TRigth>
-    where TLeft : ITableBuilder
-    where TRigth : ITableBuilder
+    where TLeft : IHasTable
+    where TRigth : IHasTable
 {
-    protected MsJoinBuilder(QueryBuilderSource source) : base(source)
+    protected MsJoinBuilder(QueryBuilderContext context) : base(context)
     {
     }
 
     public MsJoinBuilder<TLeft, TRigth> Join()
     {
-        new JoinTranslator("join", TRigth.GetTable()).Run(Source);
+        new JoinTranslator("join", TRigth.GetTable()).Run(Context);
         return this;
     }
 
     public MsJoinBuilder<TLeft, TRigth> LeftJoin()
     {
-        new JoinTranslator("left join", TRigth.GetTable()).Run(Source);
+        new JoinTranslator("left join", TRigth.GetTable()).Run(Context);
         return this;
     }
 
     public MsJoinBuilder<TLeft, TRigth> EqualTo<TLeftField, TRigthField>(Expression<Func<TLeft, TLeftField>> columnLeft, Expression<Func<TRigth, TRigthField>> columnRigth)
     {
-        new EqualTranslator(CommonExpression.GetColumnName(columnLeft), CommonExpression.GetColumnName(columnRigth), TLeft.GetTable(), TRigth.GetTable()).Run(Source);
+        new EqualTranslator(CommonExpression.GetColumnName(columnLeft), CommonExpression.GetColumnName(columnRigth), TLeft.GetTable(), TRigth.GetTable()).Run(Context);
         return this;
     }
 
     public MsJoinBuilder<TLeft, TRigth> EqualTo(string columnLeft, string columnRigth)
     {
-        new EqualTranslator(columnLeft, columnRigth, TLeft.GetTable(), TRigth.GetTable()).Run(Source);
+        new EqualTranslator(columnLeft, columnRigth, TLeft.GetTable(), TRigth.GetTable()).Run(Context);
         return this;
     }
 
     public MsJoinBuilder<TLeft, TRigth> And()
     {
-        new AndTranslator().Run(Source);
+        new AndTranslator().Run(Context);
         return this;
     }
 
@@ -59,14 +59,14 @@ public class MsJoinBuilder<TLeft, TRigth> : QueryBuilderCore, IMsJoinBuilder<TLe
         throw new NotImplementedException();
     }
 
-    public static MsJoinBuilder<TLeft, TRigth> JoinMake(QueryBuilderSource source, Action<MsJoinBuilder<TLeft, TRigth>> inner)
+    public static MsJoinBuilder<TLeft, TRigth> JoinMake(QueryBuilderContext source, Action<MsJoinBuilder<TLeft, TRigth>> inner)
     {
         var obj = new MsJoinBuilder<TLeft, TRigth>(source).Join();
         inner?.Invoke(obj);
         return obj;
     }
 
-    public static MsJoinBuilder<TLeft, TRigth> LeftJoinMake(QueryBuilderSource source, Action<MsJoinBuilder<TLeft, TRigth>> inner)
+    public static MsJoinBuilder<TLeft, TRigth> LeftJoinMake(QueryBuilderContext source, Action<MsJoinBuilder<TLeft, TRigth>> inner)
     {
         var obj = new MsJoinBuilder<TLeft, TRigth>(source).LeftJoin();
         inner?.Invoke(obj);

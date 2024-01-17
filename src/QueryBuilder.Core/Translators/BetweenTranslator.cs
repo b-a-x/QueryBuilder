@@ -7,9 +7,9 @@ public readonly ref struct BetweenTranslator
 {
     private readonly string _columnLeft;
     private readonly string _columnRigthOne;
-    private readonly TableBuilder _tableLeft;
-    private readonly TableBuilder _tableRigthOne;
-    public BetweenTranslator(string columnLeft, string columnRigthOne, TableBuilder tableLeft, TableBuilder tableRigthOne)
+    private readonly Table _tableLeft;
+    private readonly Table _tableRigthOne;
+    public BetweenTranslator(string columnLeft, string columnRigthOne, Table tableLeft, Table tableRigthOne)
     {
         _columnLeft = columnLeft;
         _columnRigthOne = columnRigthOne;
@@ -17,7 +17,7 @@ public readonly ref struct BetweenTranslator
         _tableRigthOne = tableRigthOne;
     }
 
-    public void Run(QueryBuilderSource source)
+    public void Run(QueryBuilderContext source)
     {
         source.Query.Append(_tableLeft.Alias)
                     .Append(".")

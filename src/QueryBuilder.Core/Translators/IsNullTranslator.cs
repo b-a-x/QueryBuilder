@@ -5,7 +5,7 @@ namespace QueryBuilder.Core.Translators;
 
 public readonly ref struct IsNullTranslator
 {
-    public void Run(QueryBuilderSource source)
+    public void Run(QueryBuilderContext source)
     {
         source.Query.Append("is null");
     }

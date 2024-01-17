@@ -2,10 +2,18 @@
 
 public class QueryBuilderCore
 {
-    public readonly QueryBuilderSource Source;
+    public readonly QueryBuilderContext Context;
 
-    protected QueryBuilderCore(QueryBuilderSource source)
+    protected QueryBuilderCore(QueryBuilderContext context)
     {
-        Source = source;
+        Context = context;
+    }
+
+    public static TResult Make<TResult>(QueryBuilderContext source, Action<TResult>? inner = null)
+        where TResult : class, new()
+    {
+        var obj = new TResult(source);
+        inner?.Invoke(obj);
+        return obj;
     }
 }

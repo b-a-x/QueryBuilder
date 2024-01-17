@@ -7,16 +7,16 @@ public readonly ref struct IsNullFuncTranslator
 {
     private readonly object _value;
     private readonly string _column;
-    private readonly TableBuilder _table;
+    private readonly Table _table;
 
-    public IsNullFuncTranslator(string column, object value, TableBuilder table)
+    public IsNullFuncTranslator(string column, object value, Table table)
     {
         _column = column;
         _value = value;
         _table = table;
     }
 
-    public void Run(QueryBuilderSource source)
+    public void Run(QueryBuilderContext source)
     {
         source.Parameters.Add(_value, out string name);
         source.Query.Append("isnull(")

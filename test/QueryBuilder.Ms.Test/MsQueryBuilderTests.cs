@@ -65,13 +65,13 @@ public class MsQueryBuilderTests
         .Join<Dict_PS, v_Dict_Hier>(x => x.EqualTo(x => x.HierLev3_ID, x => x.HierLev3_ID));
         
         
-        var source = new QueryBuilderSource();
+        var source = new QueryBuilderContext();
         builder(new MsQueryBuilder(source));
         
         Assert.Equal(expected, source.Query.ToString());
     }
 
-    public class Info_TI_Hist : ITableBuilder
+    public class Info_TI_Hist : IHasTable
     {
         public int ATSAIS_ID { get; set; }
         public int ATSArea_ID { get; set; }
@@ -79,23 +79,23 @@ public class MsQueryBuilderTests
         public int RegistrationType { get; set; }
         public int PS_ID { get; set; }
         public int TI_ID { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Info_TI_Hist", "ti");
+        public static Table GetTable() => new Table("dbo", "Info_TI_Hist", "ti");
     }
-    public class Info_TI : ITableBuilder
+    public class Info_TI : IHasTable
     {
         public int MRid { get; set; }
         public int TI_ID { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Info_TI", "tio");
+        public static Table GetTable() => new Table("dbo", "Info_TI", "tio");
     }
-    public class Dict_PS : ITableBuilder
+    public class Dict_PS : IHasTable
     {
         public int PS_ID { get; set; }
         public int StringName { get; set; }
         public int HierLev3_ID { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_PS", "ps");
+        public static Table GetTable() => new Table("dbo", "Dict_PS", "ps");
     }
 
-    public class v_Dict_Hier : ITableBuilder
+    public class v_Dict_Hier : IHasTable
     {
         public int HierLev1_ID { get; set; }
         public int HierLev2_ID { get; set; }
@@ -103,49 +103,49 @@ public class MsQueryBuilderTests
         public int HierLev1Name { get; set; }
         public int HierLev2Name { get; set; }
         public int HierLev3Name { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "v_Dict_Hier", "h");
+        public static Table GetTable() => new Table("dbo", "v_Dict_Hier", "h");
     }
 
-    public class Dict_TI_RegistrationTypes : ITableBuilder
+    public class Dict_TI_RegistrationTypes : IHasTable
     {
         public int Name { get; set; }
         public int RegistrationType { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_TI_RegistrationTypes", "rt");
+        public static Table GetTable() => new Table("dbo", "Dict_TI_RegistrationTypes", "rt");
     }
 
-    public class Dict_TI_Types : ITableBuilder
+    public class Dict_TI_Types : IHasTable
     {
         public int StringName { get; set; }
         public int TIType { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_TI_Types", "tt");
+        public static Table GetTable() => new Table("dbo", "Dict_TI_Types", "tt");
     }
 
-    public class MGLEP_TI_COUNTRIES : ITableBuilder
+    public class MGLEP_TI_COUNTRIES : IHasTable
     {
         public int COUNTRY_ID { get; set; }
         public int TI_ID { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "MGLEP_TI_COUNTRIES", "cc");
+        public static Table GetTable() => new Table("dbo", "MGLEP_TI_COUNTRIES", "cc");
     }
 
-    public class MGLEP_SPR_COUNTRIES : ITableBuilder
+    public class MGLEP_SPR_COUNTRIES : IHasTable
     {
         public int ID { get; set; }
         public int NAME { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "MGLEP_SPR_COUNTRIES", "c");
+        public static Table GetTable() => new Table("dbo", "MGLEP_SPR_COUNTRIES", "c");
     }
 
-    public class Dict_Areas : ITableBuilder
+    public class Dict_Areas : IHasTable
     {
         public int ATSArea_ID { get; set; }
         public int ATSAreaName { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_Areas", "areas");
+        public static Table GetTable() => new Table("dbo", "Dict_Areas", "areas");
     }
 
-    public class Dict_AIS : ITableBuilder
+    public class Dict_AIS : IHasTable
     {
         public int ATSAIS_ID { get; set; }
         public int ATSAISName { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_AIS", "ais");
+        public static Table GetTable() => new Table("dbo", "Dict_AIS", "ais");
     }
     #endregion
     #region 2
@@ -468,23 +468,23 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
         
 
 
-        var source = new QueryBuilderSource();
+        var source = new QueryBuilderContext();
         builder(new MsQueryBuilder(source));
 
         Assert.Equal(expected, source.Query.ToString());
     }
 
-    public class Sub_dc_ec : ITableBuilder
+    public class Sub_dc_ec : IHasTable
     {
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Sub_dc_ec", "sub_dc_ec");
+        public static Table GetTable() => new Table("dbo", "Sub_dc_ec", "sub_dc_ec");
     }
 
-	public class Sub_dc : ITableBuilder
+	public class Sub_dc : IHasTable
 	{
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Sub_dc", "sub_dc");
+        public static Table GetTable() => new Table("dbo", "Sub_dc", "sub_dc");
     }
 
-	public class Dict_ConsumerContract : ITableBuilder
+	public class Dict_ConsumerContract : IHasTable
     {
 		public int ConsumerContract_ID { get; set; }
         public int HierLev1_ID { get; set; }
@@ -499,41 +499,41 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
         public int ConsumerContract_SAP_ID { get; set; }
         public int LastModifiedDate { get; set; }
 		public int IsExistingContract { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_ConsumerContract", "dc1");
+        public static Table GetTable() => new Table("dbo", "Dict_ConsumerContract", "dc1");
     }
 
-    public class Dict_HierLev1 : ITableBuilder
+    public class Dict_HierLev1 : IHasTable
     {
 		public int HierLev1_ID { get; set; }
         public int StringName { get; set; }
 		public int SAP_ID { get; set; }
 		public int ShortCode { get; set; }
 
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_HierLev1", "h1");
+        public static Table GetTable() => new Table("dbo", "Dict_HierLev1", "h1");
     }
 
-	public class Dict_Organization : ITableBuilder
+	public class Dict_Organization : IHasTable
     {
 		public int Organization_ID { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_Organization", "do1");
+        public static Table GetTable() => new Table("dbo", "Dict_Organization", "do1");
     }
 
-    public class Dict_ConsumerContract_Type : ITableBuilder
+    public class Dict_ConsumerContract_Type : IHasTable
     {
 		public int ContractorType_ID { get; set; }
         public int ConsumerContract_Type_ID { get; set; }
 		public int ConsumerContract_Type_Name { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_ConsumerContract_Type", "dcct");
+        public static Table GetTable() => new Table("dbo", "Dict_ConsumerContract_Type", "dcct");
     }
 
-	public class Dict_ContractorType_Hist : ITableBuilder
+	public class Dict_ContractorType_Hist : IHasTable
     {
 		public int ContractorTypeVersion_ID { get; set; }
 		public int ConsumerContract_ID { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_ContractorType_Hist", "dct");
+        public static Table GetTable() => new Table("dbo", "Dict_ContractorType_Hist", "dct");
     }
 
-	public class Dict_ConsumerContract_SAP_Hist : ITableBuilder
+	public class Dict_ConsumerContract_SAP_Hist : IHasTable
     {
 		public string SAP_ID { get; set; }
         public int ContractStatus { get; set; }
@@ -541,15 +541,15 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
 		public DateTime FinishDate { get; set; }
 		public int ConsumerContract_SAP_ID { get; set; }
 		public int EDF { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_ConsumerContract_SAP_Hist", "csap");
+        public static Table GetTable() => new Table("dbo", "Dict_ConsumerContract_SAP_Hist", "csap");
     }
 
-	public class Dict_ConsumerContract_SAP : ITableBuilder
+	public class Dict_ConsumerContract_SAP : IHasTable
 	{
 		public int MRid { get; set; }
         public int NSIQualityStatus { get; set; }
         public int ConsumerContract_SAP_ID { get; set; }
-        public static TableBuilder GetTable() => new TableBuilder("dbo", "Dict_ConsumerContract_SAP", "csap1");
+        public static Table GetTable() => new Table("dbo", "Dict_ConsumerContract_SAP", "csap1");
     }
 
     #endregion

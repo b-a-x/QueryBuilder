@@ -8,9 +8,9 @@ using QueryBuilder.Ms.Translators;
 namespace QueryBuilder.Ms.Queries;
 
 public interface IMsWhereBuilder<T>
-    where T : ITableBuilder
+    where T : IHasTable
 {
-    IMsWhereBuilder<TDto> Bind<TDto>() where TDto : ITableBuilder;
+    IMsWhereBuilder<TDto> Bind<TDto>() where TDto : IHasTable;
     IMsWhereBuilder<T> Column<TField>([NotNull] Expression<Func<T, TField>> column);
     IMsWhereBuilder<T> EqualTo<TField>([NotNull] Expression<Func<T, TField>> column, TField value);
     IMsWhereBuilder<T> MoreEqualTo<TField>([NotNull] Expression<Func<T, TField>> column, TField value);
@@ -25,99 +25,99 @@ public interface IMsWhereBuilder<T>
 }
 
 public class MsWhereBuilder<T> : QueryBuilderCore, IMsWhereBuilder<T>
-    where T : ITableBuilder
+    where T : IHasTable
 {
-    public MsWhereBuilder(QueryBuilderSource source) : base(source) { }
+    public MsWhereBuilder(QueryBuilderContext source) : base(source) { }
 
     public IMsWhereBuilder<T> Where()
     {
-        new CommandTranslator("where").Run(Source);
+        new CommandTranslator("where").Run(Context);
         return this;
     }
 
     public IMsWhereBuilder<T> EqualTo<TField>([NotNull] Expression<Func<T, TField>> column, [NotNull] TField value)
     {
-        new EqualToTranslator(CommonExpression.GetColumnName(column), value, T.GetTable()).Run(Source);
+        new EqualToTranslator(CommonExpression.GetColumnName(column), value, T.GetTable()).Run(Context);
         return this;
     }
 
     public IMsWhereBuilder<T> And()
     {
-        new AndTranslator().Run(Source);
+        new AndTranslator().Run(Context);
         return this;
     }
 
     public IMsWhereBuilder<T> Or()
     {
-        new OrTranslator().Run(Source);
+        new OrTranslator().Run(Context);
         return this;
     }
 
     public IMsWhereBuilder<TDto> Bind<TDto>()
-        where TDto : ITableBuilder 
-        => MsWhereBuilder<TDto>.Make(Source, null);
+        where TDto : IHasTable 
+        => MsWhereBuilder<TDto>.Make(Context, null);
 
     public IMsWhereBuilder<T> Bracket(Action inner)
     {
         var bracket = new BracketTranslator();
-        bracket.BeforeRun(Source);
+        bracket.BeforeRun(Context);
         inner?.Invoke();
-        bracket.AfterRun(Source);
+        bracket.AfterRun(Context);
         return this;
     }
 
     public IMsWhereBuilder<T> MoreEqualTo<TField>([NotNull] Expression<Func<T, TField>> column, TField value)
     {
-        new MoreEqualToTranslator(CommonExpression.GetColumnName(column), value, T.GetTable()).Run(Source);
+        new MoreEqualToTranslator(CommonExpression.GetColumnName(column), value, T.GetTable()).Run(Context);
         return this;
     }
 
     public IMsWhereBuilder<T> LessEqualTo<TField>([NotNull] Expression<Func<T, TField>> column, TField value)
     {
-        new LessEqualToTranslator(CommonExpression.GetColumnName(column), value, T.GetTable()).Run(Source);
+        new LessEqualToTranslator(CommonExpression.GetColumnName(column), value, T.GetTable()).Run(Context);
         return this;
     }
 
     public IMsWhereBuilder<T> IsNull()
     {
-        new IsNullTranslator().Run(Source);
+        new IsNullTranslator().Run(Context);
         return this;
     }
 
     public IMsWhereBuilder<T> IsNull<TField>([NotNull] Expression<Func<T, TField>> column)
     {
         Column(column);
-        new IsNullTranslator().Run(Source);
+        new IsNullTranslator().Run(Context);
         return this;
     }
 
     public IMsWhereBuilder<T> IsNotNull()
     {
-        new IsNotNullTranslator().Run(Source);
+        new IsNotNullTranslator().Run(Context);
         return this;
     }
 
     public IMsWhereBuilder<T> IsNotNull<TField>([NotNull] Expression<Func<T, TField>> column)
     {
         Column(column);
-        new IsNotNullTranslator().Run(Source);
+        new IsNotNullTranslator().Run(Context);
         return this;
     }
 
     public IMsWhereBuilder<T> Column<TField>([NotNull] Expression<Func<T, TField>> column)
     {
-        new ColumnTranslator(CommonExpression.GetColumnName(column), T.GetTable()).Run(Source);
+        new ColumnTranslator(CommonExpression.GetColumnName(column), T.GetTable()).Run(Context);
         return this;
     }
 
-    public static MsWhereBuilder<T> Make(QueryBuilderSource source, Action<MsWhereBuilder<T>> inner)
+    public static MsWhereBuilder<T> Make(QueryBuilderContext source, Action<MsWhereBuilder<T>> inner)
     {
         var obj = new MsWhereBuilder<T>(source);
         inner?.Invoke(obj);
         return obj;
     }
 
-    public static MsWhereBuilder<T> MakeWhere(QueryBuilderSource source, Action<MsWhereBuilder<T>> inner)
+    public static MsWhereBuilder<T> MakeWhere(QueryBuilderContext source, Action<MsWhereBuilder<T>> inner)
     {
         var obj = new MsWhereBuilder<T>(source);
         obj.Where();
