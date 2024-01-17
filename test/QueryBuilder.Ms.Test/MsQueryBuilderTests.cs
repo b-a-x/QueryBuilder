@@ -63,12 +63,11 @@ public class MsQueryBuilderTests
         .LeftJoin<MGLEP_TI_COUNTRIES>(x => x.EqualTo(x => x.TI_ID, x => x.TI_ID))
         .LeftJoin<MGLEP_TI_COUNTRIES, MGLEP_SPR_COUNTRIES>(x => x.EqualTo(x => x.COUNTRY_ID, x => x.ID))
         .Join<Dict_PS, v_Dict_Hier>(x => x.EqualTo(x => x.HierLev3_ID, x => x.HierLev3_ID));
-        
-        
-        var source = new QueryBuilderContext();
-        builder(new MsQueryBuilder(source));
-        
-        Assert.Equal(expected, source.Query.ToString());
+
+
+        builder(QBCore.Make<MsQueryBuilder>(out QueryBuilderContext context));
+
+        Assert.Equal(expected, context.Query.ToString());
     }
 
     public class Info_TI_Hist : IHasTable
@@ -465,13 +464,12 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
 								})
 						  )
 			  );
-        
 
 
-        var source = new QueryBuilderContext();
-        builder(new MsQueryBuilder(source));
 
-        Assert.Equal(expected, source.Query.ToString());
+        builder(QBCore.Make<MsQueryBuilder>(out QueryBuilderContext context));
+
+        Assert.Equal(expected, context.Query.ToString());
     }
 
     public class Sub_dc_ec : IHasTable

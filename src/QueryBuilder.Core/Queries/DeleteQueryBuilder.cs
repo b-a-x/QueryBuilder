@@ -2,7 +2,6 @@
 
 public interface IDeleteQueryBuilder<T> { }
 
-public class DeleteQueryBuilder<T> : QueryBuilderCore, IDeleteQueryBuilder<T>
+public class DeleteQueryBuilder<T> : QBCore, IDeleteQueryBuilder<T>
 {
-    public DeleteQueryBuilder(QueryBuilderContext source) : base(source) {}
 }

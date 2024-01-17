@@ -2,7 +2,6 @@
 
 namespace QueryBuilder.Core;
 
-public partial class QueryBuilder : QueryBuilderCore
+public partial class QueryBuilder : QBCore
 {
-    public QueryBuilder(QueryBuilderContext source) : base(source) { }
 }

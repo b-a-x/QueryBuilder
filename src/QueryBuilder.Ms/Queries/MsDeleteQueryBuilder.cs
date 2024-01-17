@@ -11,29 +11,19 @@ public interface IMsDeleteQueryBuilder<T>
     IMsDeleteQueryBuilder<T> Where(Action<IMsWhereBuilder<T>> inner);
 }
 
-public class MsDeleteQueryBuilder<T> : QueryBuilderCore, IMsDeleteQueryBuilder<T>
+public class MsDeleteQueryBuilder<T> : QBCore, IMsDeleteQueryBuilder<T>
     where T : IHasTable
 {
-    public MsDeleteQueryBuilder(QueryBuilderContext source) : base(source) { }
-
-    public static MsDeleteQueryBuilder<T> Make(QueryBuilderContext source) => 
-        new MsDeleteQueryBuilder<T>(source);
-
-    public MsDeleteQueryBuilder<T> Delete()
+    public IMsDeleteQueryBuilder<T> Delete()
     {
         new TableTranslator("delete", T.GetTable()).Run(Context);
         return this;
     }
 
-    public MsDeleteQueryBuilder<T> Where(Action<MsWhereBuilder<T>> inner)
+    public IMsDeleteQueryBuilder<T> Where(Action<IMsWhereBuilder<T>> inner)
     {
-        MsWhereBuilder<T>.MakeWhere(Context, inner);
+        new CommandTranslator("where").Run(Context);
+        QBCore.Make<MsWhereBuilder<T>>(Context, inner);
         return this;
     }
-
-    IMsDeleteQueryBuilder<T> IMsDeleteQueryBuilder<T>.Delete() => 
-        Delete();
-
-    IMsDeleteQueryBuilder<T> IMsDeleteQueryBuilder<T>.Where(Action<IMsWhereBuilder<T>> inner) => 
-        Where(inner);
 }

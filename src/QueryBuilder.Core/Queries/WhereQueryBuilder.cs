@@ -2,7 +2,6 @@
 
 public interface IWhereBuilder<T> { }
 
-public class WhereQueryBuilder<T> : QueryBuilderCore, IWhereBuilder<T>
+public class WhereQueryBuilder<T> : QBCore, IWhereBuilder<T>
 {
-    public WhereQueryBuilder(QueryBuilderContext source) : base(source) { }
 }

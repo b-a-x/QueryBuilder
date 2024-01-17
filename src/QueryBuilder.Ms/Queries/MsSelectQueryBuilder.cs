@@ -29,112 +29,75 @@ public interface IMsSelectQueryBuilder<TDto> : ISelect
     IMsSelectQueryBuilder<TDto> Where(Action<IMsWhereBuilder<TDto>> inner);
 }
 
-public class MsSelectQueryBuilder<TDto> : QueryBuilderCore, IMsSelectQueryBuilder<TDto>
+public class MsSelectQueryBuilder<TDto> : QBCore, IMsSelectQueryBuilder<TDto>
     where TDto : IHasTable
 {
-    public MsSelectQueryBuilder(QueryBuilderContext source) : base(source) {}
-
-    public MsSelectQueryBuilder<TDto> Select()
+    public IMsSelectQueryBuilder<TDto> Select(Action<IMsSelectBuilder<TDto>> inner)
     {
         new CommandTranslator("select").Run(Context);
+        QBCore.Make<MsSelectBuilder<TDto>>(Context, inner);
         return this;
     }
 
-    public MsSelectQueryBuilder<TDto> Select(Action<MsSelectBuilder<TDto>> inner)
-    {
-        Select();
-        MsSelectBuilder<TDto>.Make(Context, inner);
-        return this;
-    }
-
-    public MsSelectQueryBuilder<T> Select<T>(Action<MsSelectBuilder<T>> inner)
+    public IMsSelectQueryBuilder<T> Select<T>(Action<IMsSelectBuilder<T>> inner)
         where T : IHasTable
     {
-        return MsSelectQueryBuilder<T>.Make(Context, null).Select(inner);
+        return QBCore.Make<MsSelectQueryBuilder<T>>(Context).Select(inner);
     }
 
-    public MsSelectQueryBuilder<TDto> From()
+    public IMsSelectQueryBuilder<TDto> From()
     {
         new TableTranslator("from", TDto.GetTable()).Run(Context);
         return this;
     }
 
-    public MsSelectQueryBuilder<TDto> From(Action<MsSelectQueryBuilder<TDto>> inner)
+    public IMsSelectQueryBuilder<TDto> From(Action<IMsSelectQueryBuilder<TDto>> inner)
     {
         var translator = new FromTranslator(TDto.GetTable());
         translator.BeginRun(Context);
-        MsSelectQueryBuilder<TDto>.Make(Context, inner);
+        QBCore.Make<MsSelectQueryBuilder<TDto>>(Context, inner);
         translator.EndRun(Context);
         return this;
     }
 
-    public MsSelectQueryBuilder<TDto> Where(Action<MsWhereBuilder<TDto>> inner)
+    public IMsSelectQueryBuilder<TDto> Where(Action<IMsWhereBuilder<TDto>> inner)
     {
-        MsWhereBuilder<TDto>.MakeWhere(Context, inner);
+        new CommandTranslator("where").Run(Context);
+        QBCore.Make<MsWhereBuilder<TDto>>(Context, inner);
         return this;
     }
 
-    public MsSelectQueryBuilder<TDto> Join<TRigth>(Action<MsJoinBuilder<TDto, TRigth>> inner)
+    public IMsSelectQueryBuilder<TDto> Join<TRigth>(Action<IMsJoinBuilder<TDto, TRigth>> inner)
         where TRigth : IHasTable
     {
-        MsJoinBuilder<TDto, TRigth>.JoinMake(Context, inner);
+        new JoinTranslator("join", TRigth.GetTable()).Run(Context);
+        QBCore.Make<MsJoinBuilder<TDto, TRigth>>(Context, inner);
         return this;
     }
 
-    public MsSelectQueryBuilder<TDto> Join<TLeft, TRigth>(Action<MsJoinBuilder<TLeft, TRigth>> inner)
+    public IMsSelectQueryBuilder<TDto> Join<TLeft, TRigth>(Action<IMsJoinBuilder<TLeft, TRigth>> inner)
         where TLeft : IHasTable
         where TRigth : IHasTable
     {
-        MsJoinBuilder<TLeft, TRigth>.JoinMake(Context, inner);
+        new JoinTranslator("join", TRigth.GetTable()).Run(Context);
+        QBCore.Make<MsJoinBuilder<TLeft, TRigth>>(Context, inner);
         return this;
     }
 
-    public MsSelectQueryBuilder<TDto> LeftJoin<TRigth>(Action<MsJoinBuilder<TDto, TRigth>> inner)
+    public IMsSelectQueryBuilder<TDto> LeftJoin<TRigth>(Action<IMsJoinBuilder<TDto, TRigth>> inner)
         where TRigth : IHasTable
     {
-        MsJoinBuilder<TDto, TRigth>.LeftJoinMake(Context, inner);
+        new JoinTranslator("left join", TRigth.GetTable()).Run(Context);
+        QBCore.Make<MsJoinBuilder<TDto, TRigth>>(Context, inner);
         return this;
     }
 
-    public MsSelectQueryBuilder<TDto> LeftJoin<TLeft, TRigth>(Action<MsJoinBuilder<TLeft, TRigth>> inner)
+    public IMsSelectQueryBuilder<TDto> LeftJoin<TLeft, TRigth>(Action<IMsJoinBuilder<TLeft, TRigth>> inner)
         where TRigth : IHasTable
         where TLeft : IHasTable
     {
-        MsJoinBuilder<TLeft, TRigth>.LeftJoinMake(Context, inner);
+        new JoinTranslator("left join", TRigth.GetTable()).Run(Context);
+        QBCore.Make<MsJoinBuilder<TLeft, TRigth>>(Context, inner);
         return this;
     }
-
-    public static MsSelectQueryBuilder<TDto> Make(QueryBuilderContext source, Action<MsSelectQueryBuilder<TDto>> inner)
-    {
-        var obj = new MsSelectQueryBuilder<TDto>(source);
-        inner?.Invoke(obj);
-        return obj;
-    }
-
-    IMsSelectQueryBuilder<TDto> IMsSelectQueryBuilder<TDto>.Where(Action<IMsWhereBuilder<TDto>> inner)
-        => Where(inner);
-
-    IMsSelectQueryBuilder<TDto> IMsSelectQueryBuilder<TDto>.Join<TLeft, TRigth>(Action<IMsJoinBuilder<TLeft, TRigth>> inner) 
-        => Join(inner);
-
-    IMsSelectQueryBuilder<TDto> IMsSelectQueryBuilder<TDto>.Join<TRigth>(Action<IMsJoinBuilder<TDto, TRigth>> inner) 
-        => Join<TRigth>(inner);
-
-    IMsSelectQueryBuilder<TDto> IMsSelectQueryBuilder<TDto>.LeftJoin<TRigth>(Action<IMsJoinBuilder<TDto, TRigth>> inner) 
-        => LeftJoin<TRigth>(inner);
-
-    IMsSelectQueryBuilder<TDto> IMsSelectQueryBuilder<TDto>.LeftJoin<TLeft, TRigth>(Action<IMsJoinBuilder<TLeft, TRigth>> inner) 
-        => LeftJoin(inner);
-
-    IMsSelectQueryBuilder<TDto> IMsSelectQueryBuilder<TDto>.From(Action<IMsSelectQueryBuilder<TDto>> inner) 
-        => From(inner);
-
-    IMsSelectQueryBuilder<TDto> IMsSelectQueryBuilder<TDto>.From() 
-        => From();
-
-    IMsSelectQueryBuilder<T> ISelect.Select<T>(Action<IMsSelectBuilder<T>> inner) 
-        => Select(inner);
-
-    IMsSelectQueryBuilder<TDto> IMsSelectQueryBuilder<TDto>.Select(Action<IMsSelectBuilder<TDto>> inner) 
-        => Select(inner);
 }

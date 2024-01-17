@@ -24,17 +24,9 @@ public interface IMsWhereBuilder<T>
     IMsWhereBuilder<T> IsNotNull<TField>([NotNull] Expression<Func<T, TField>> column);
 }
 
-public class MsWhereBuilder<T> : QueryBuilderCore, IMsWhereBuilder<T>
+public class MsWhereBuilder<T> : QBCore, IMsWhereBuilder<T>
     where T : IHasTable
 {
-    public MsWhereBuilder(QueryBuilderContext source) : base(source) { }
-
-    public IMsWhereBuilder<T> Where()
-    {
-        new CommandTranslator("where").Run(Context);
-        return this;
-    }
-
     public IMsWhereBuilder<T> EqualTo<TField>([NotNull] Expression<Func<T, TField>> column, [NotNull] TField value)
     {
         new EqualToTranslator(CommonExpression.GetColumnName(column), value, T.GetTable()).Run(Context);
@@ -55,7 +47,7 @@ public class MsWhereBuilder<T> : QueryBuilderCore, IMsWhereBuilder<T>
 
     public IMsWhereBuilder<TDto> Bind<TDto>()
         where TDto : IHasTable 
-        => MsWhereBuilder<TDto>.Make(Context, null);
+        => QBCore.Make<MsWhereBuilder<TDto>>(Context);
 
     public IMsWhereBuilder<T> Bracket(Action inner)
     {
@@ -108,20 +100,5 @@ public class MsWhereBuilder<T> : QueryBuilderCore, IMsWhereBuilder<T>
     {
         new ColumnTranslator(CommonExpression.GetColumnName(column), T.GetTable()).Run(Context);
         return this;
-    }
-
-    public static MsWhereBuilder<T> Make(QueryBuilderContext source, Action<MsWhereBuilder<T>> inner)
-    {
-        var obj = new MsWhereBuilder<T>(source);
-        inner?.Invoke(obj);
-        return obj;
-    }
-
-    public static MsWhereBuilder<T> MakeWhere(QueryBuilderContext source, Action<MsWhereBuilder<T>> inner)
-    {
-        var obj = new MsWhereBuilder<T>(source);
-        obj.Where();
-        inner?.Invoke(obj);
-        return obj;
     }
 }

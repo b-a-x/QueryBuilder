@@ -18,11 +18,9 @@ public interface IMsSelectBuilder<T>
     IMsSelectBuilder<T> IsNullFunc<TField>([NotNull] Expression<Func<T, TField>> column, TField value);
 }
 
-public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
+public class MsSelectBuilder<T> : QBCore, IMsSelectBuilder<T>
     where T : IHasTable
 {
-    public MsSelectBuilder(QueryBuilderContext source) : base(source) {}
-
     public IMsSelectBuilder<T> All()
     {
         new CommaSelectTranslator().Run(Context);
@@ -49,22 +47,13 @@ public class MsSelectBuilder<T> : QueryBuilderCore, IMsSelectBuilder<T>
         return this;
     }
 
-    public IMsSelectBuilder<TDto> Bind<TDto>() where TDto : IHasTable
-    {
-        return MsSelectBuilder<TDto>.Make(Context);
-    }
+    public IMsSelectBuilder<TDto> Bind<TDto>() where TDto : IHasTable => 
+        QBCore.Make<MsSelectBuilder<TDto>>(Context);
 
     public IMsSelectBuilder<T> IsNullFunc<TField>([NotNull] Expression<Func<T, TField>> column, TField value)
     {
         new CommaSelectTranslator().Run(Context);
         new IsNullFuncTranslator(CommonExpression.GetColumnName(column), value, T.GetTable()).Run(Context);
         return this;
-    }
-
-    public static MsSelectBuilder<T> Make(QueryBuilderContext source, Action<MsSelectBuilder<T>>? inner = null)
-    {
-        var obj = new MsSelectBuilder<T>(source);
-        inner?.Invoke(obj);
-        return obj;
     }
 }
