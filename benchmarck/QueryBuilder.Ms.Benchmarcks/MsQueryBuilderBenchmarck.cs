@@ -6,20 +6,20 @@ using System.Text;
 namespace QueryBuilder.Ms.Benchmarcks;
 
 /*
- BenchmarkDotNet v0.13.9+228a464e8be6c580ad9408e98f18813f6407fb5a, Windows 10 (10.0.19045.3570/22H2/2022Update)
+BenchmarkDotNet v0.13.10, Windows 10 (10.0.19045.3930/22H2/2022Update)
 AMD Ryzen 7 3800X, 1 CPU, 16 logical and 8 physical cores
-.NET SDK 7.0.401
-  [Host]     : .NET 7.0.11 (7.0.1123.42427), X64 RyuJIT AVX2 [AttachedDebugger]
-  DefaultJob : .NET 7.0.11 (7.0.1123.42427), X64 RyuJIT AVX2
+.NET SDK 8.0.100
+  [Host]     : .NET 8.0.0 (8.0.23.53103), X64 RyuJIT AVX2 [AttachedDebugger]
+  DefaultJob : .NET 8.0.0 (8.0.23.53103), X64 RyuJIT AVX2
 
 
-| Method             | Mean       | Error     | StdDev    | Rank | Gen0   | Gen1   | Allocated |
-|------------------- |-----------:|----------:|----------:|-----:|-------:|-------:|----------:|
-| QueryBuilder       |  20.810 μs | 0.1022 μs | 0.0956 μs |    3 | 2.5330 | 0.0305 |  20.73 KB |
-| QueryBuilderNameOf |   2.162 μs | 0.0390 μs | 0.0345 μs |    2 | 0.5722 | 0.0038 |    4.7 KB |
-| QueryBuilderString |   2.156 μs | 0.0425 μs | 0.0455 μs |    2 | 0.5722 | 0.0038 |    4.7 KB |
-| LoadFile           | 110.908 μs | 1.4929 μs | 1.3965 μs |    4 | 1.7090 |      - |  14.92 KB |
-| StringBuilder      |   1.066 μs | 0.0153 μs | 0.0143 μs |    1 | 0.3433 |      - |    2.8 KB |
+| Method             | Mean       | Error     | StdDev    | Median     | Rank | Gen0   | Gen1   | Allocated |
+|------------------- |-----------:|----------:|----------:|-----------:|-----:|-------:|-------:|----------:|
+| QueryBuilder       |  17.569 us | 0.0821 us | 0.0686 us |  17.574 us |    4 | 2.4719 |      - |  20.32 KB |
+| QueryBuilderNameOf |   3.231 us | 0.1690 us | 0.4982 us |   3.395 us |    2 | 0.5684 | 0.0038 |   4.64 KB |
+| QueryBuilderString |   3.550 us | 0.0694 us | 0.0927 us |   3.549 us |    3 | 0.5684 | 0.0038 |   4.64 KB |
+| LoadFile           | 184.202 us | 3.2729 us | 2.7330 us | 183.602 us |    5 | 1.7090 |      - |  14.93 KB |
+| StringBuilder      |   1.490 us | 0.0297 us | 0.0292 us |   1.484 us |    1 | 0.3433 |      - |    2.8 KB |
  */
 
 [RankColumn]
