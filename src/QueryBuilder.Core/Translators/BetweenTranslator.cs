@@ -1,5 +1,5 @@
-﻿using QueryBuilder.Core.Helpers;
-using QueryBuilder.Core.Queries;
+﻿using QueryBuilder.Core.Context;
+using QueryBuilder.Core.Entity;
 
 namespace QueryBuilder.Core.Translators;
 
@@ -17,7 +17,7 @@ public readonly ref struct BetweenTranslator
         _tableRigthOne = tableRigthOne;
     }
 
-    public void Run(QueryBuilderContext source)
+    public void Run(QBContext source)
     {
         source.Query.Append(_tableLeft.Alias)
                     .Append(".")

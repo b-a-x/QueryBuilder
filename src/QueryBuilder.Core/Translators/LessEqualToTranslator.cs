@@ -1,5 +1,5 @@
-﻿using QueryBuilder.Core.Helpers;
-using QueryBuilder.Core.Queries;
+﻿using QueryBuilder.Core.Context;
+using QueryBuilder.Core.Entity;
 
 namespace QueryBuilder.Core.Translators;
 
@@ -16,7 +16,7 @@ public readonly ref struct LessEqualToTranslator
         _table = table;
     }
 
-    public void Run(QueryBuilderContext source)
+    public void Run(QBContext source)
     {
         source.Parameters.Add(_value, out string name);
         source.Query.Append(_table.Alias).Append(".").Append(_column).Append(" <= @").Append(name);

@@ -1,4 +1,6 @@
-﻿namespace QueryBuilder.Core.Queries;
+﻿using QueryBuilder.Core.Context;
+
+namespace QueryBuilder.Core.Queries;
 
 public interface IDeleteQueryBuilder<T> { }
 

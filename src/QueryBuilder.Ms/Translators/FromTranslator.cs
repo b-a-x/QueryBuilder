@@ -1,5 +1,5 @@
-﻿using QueryBuilder.Core.Helpers;
-using QueryBuilder.Core.Queries;
+﻿using QueryBuilder.Core.Context;
+using QueryBuilder.Core.Entity;
 
 namespace QueryBuilder.Ms.Translators;
 
@@ -11,12 +11,12 @@ public readonly ref struct FromTranslator
         _table = table;
     }
 
-    public void BeginRun(QueryBuilderContext source)
+    public void BeginRun(QBContext source)
     {
         source.Query.Append("\r\n").Append("from (");
     }
 
-    public void EndRun(QueryBuilderContext source)
+    public void EndRun(QBContext source)
     {
         source.Query.Append("\r\n").Append(") ").Append(_table.Alias);
     }

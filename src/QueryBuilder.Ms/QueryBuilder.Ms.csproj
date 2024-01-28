@@ -10,8 +10,4 @@
     <ProjectReference Include="..\QueryBuilder.Core\QueryBuilder.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
-
 </Project>

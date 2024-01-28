@@ -1,11 +1,11 @@
-﻿using QueryBuilder.Core.Helpers;
-using QueryBuilder.Core.Queries;
+﻿using QueryBuilder.Core.Context;
+using QueryBuilder.Core.Helpers;
 
 namespace QueryBuilder.Core.Translators;
 
 public readonly ref struct IsNullTranslator
 {
-    public void Run(QueryBuilderContext source)
+    public void Run(QBContext source)
     {
         source.Query.Append("is null");
     }

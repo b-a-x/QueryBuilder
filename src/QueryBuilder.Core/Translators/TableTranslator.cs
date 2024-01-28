@@ -1,5 +1,6 @@
-﻿using QueryBuilder.Core.Helpers;
-using QueryBuilder.Core.Queries;
+﻿using QueryBuilder.Core.Context;
+using QueryBuilder.Core.Entity;
+using System.Diagnostics.CodeAnalysis;
 
 namespace QueryBuilder.Core.Translators;
 
@@ -14,7 +15,7 @@ public readonly ref struct TableTranslator
         _command = command;
     }
 
-    public void Run(QueryBuilderContext source)
+    public void Run([NotNull]QBContext source)
     {
         if (string.IsNullOrEmpty(_table.Name))
             throw new Exception("not used interface");

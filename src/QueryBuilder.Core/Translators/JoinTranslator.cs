@@ -1,5 +1,5 @@
-﻿using QueryBuilder.Core.Helpers;
-using QueryBuilder.Core.Queries;
+﻿using QueryBuilder.Core.Context;
+using QueryBuilder.Core.Entity;
 
 namespace QueryBuilder.Core.Translators;
 
@@ -12,7 +12,7 @@ public readonly ref struct JoinTranslator
         _table = table;
         _command = command;
     }
-    public void Run(QueryBuilderContext source)
+    public void Run(QBContext source)
     {
         if (string.IsNullOrEmpty(_table.Name))
             throw new Exception("not used interface");

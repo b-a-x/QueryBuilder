@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
-using QueryBuilder.Core.Helpers;
-using QueryBuilder.Core.Queries;
+using QueryBuilder.Core.Context;
+using QueryBuilder.Core.Entity;
 using System.Text;
 
 namespace QueryBuilder.Ms.Benchmarcks;
@@ -29,7 +29,7 @@ public class MsQueryBuilderBenchmarck
     [Benchmark]
     public string QueryBuilder()
     {
-        Action<IMsQueryBuilder> builder = b => b
+        Action<IQueryBuilder> builder = b => b
         .Select<Info_TI_Hist>(x =>
         {
             x.All();
@@ -57,7 +57,7 @@ public class MsQueryBuilderBenchmarck
         .LeftJoin<MGLEP_TI_COUNTRIES, MGLEP_SPR_COUNTRIES>(x => x.EqualTo(x => x.COUNTRY_ID, x => x.ID))
         .Join<Dict_PS, v_Dict_Hier>(x => x.EqualTo(x => x.HierLev3_ID, x => x.HierLev3_ID));
 
-        builder(QBCore.Make<MsQueryBuilder>(out QueryBuilderContext context));
+        builder(QBCore.Make<QueryBuilder>(out QBContext context));
 
         return context.Query.ToString();
     }
@@ -65,7 +65,7 @@ public class MsQueryBuilderBenchmarck
     [Benchmark]
     public string QueryBuilderNameOf()
     {
-        Action<IMsQueryBuilder> builder = b => b
+        Action<IQueryBuilder> builder = b => b
         .Select<Info_TI_Hist>(x =>
         {
             x.All();
@@ -93,7 +93,7 @@ public class MsQueryBuilderBenchmarck
         .LeftJoin<MGLEP_TI_COUNTRIES, MGLEP_SPR_COUNTRIES>(x => x.EqualTo(nameof(MGLEP_TI_COUNTRIES.COUNTRY_ID), nameof(MGLEP_SPR_COUNTRIES.ID)))
         .Join<Dict_PS, v_Dict_Hier>(x => x.EqualTo(nameof(Dict_PS.HierLev3_ID), nameof(v_Dict_Hier.HierLev3_ID)));
 
-        builder(QBCore.Make<MsQueryBuilder>(out QueryBuilderContext context));
+        builder(QBCore.Make<QueryBuilder>(out QBContext context));
 
         return context.Query.ToString();
     }
@@ -101,7 +101,7 @@ public class MsQueryBuilderBenchmarck
     [Benchmark]
     public string QueryBuilderString()
     {
-        Action<IMsQueryBuilder> builder = b => b
+        Action<IQueryBuilder> builder = b => b
         .Select<Info_TI_Hist>(x =>
         {
             x.All();
@@ -129,7 +129,7 @@ public class MsQueryBuilderBenchmarck
         .LeftJoin<MGLEP_TI_COUNTRIES, MGLEP_SPR_COUNTRIES>(x => x.EqualTo("COUNTRY_ID", "ID"))
         .Join<Dict_PS, v_Dict_Hier>(x => x.EqualTo("HierLev3_ID", "HierLev3_ID"));
 
-        builder(QBCore.Make<MsQueryBuilder>(out QueryBuilderContext context));
+        builder(QBCore.Make<QueryBuilder>(out QBContext context));
 
         return context.Query.ToString();
     }

@@ -1,5 +1,5 @@
-﻿using QueryBuilder.Core.Helpers;
-using QueryBuilder.Core.Queries;
+﻿using QueryBuilder.Core.Context;
+using QueryBuilder.Core.Entity;
 using System.Xml.Linq;
 
 namespace QueryBuilder.Ms.Test;
@@ -35,7 +35,7 @@ public class MsQueryBuilderTests
     [InlineData("\r\nselect ti.* ,tio.MRid ,ps.StringName as PSName ,rt.Name as RegistrationTypeName ,h.HierLev1_ID ,h.HierLev2_ID ,h.HierLev3_ID ,h.HierLev1Name ,h.HierLev2Name ,h.HierLev3Name ,cc.COUNTRY_ID ,c.NAME as CountryName ,areas.ATSAreaName ,ais.ATSAISName \r\nfrom dbo.Info_TI_Hist as ti\r\njoin dbo.Info_TI as tio on ti.TI_ID = tio.TI_ID\r\njoin dbo.Dict_PS as ps on ti.PS_ID = ps.PS_ID\r\njoin dbo.Dict_TI_RegistrationTypes as rt on ti.RegistrationType = rt.RegistrationType\r\njoin dbo.Dict_TI_Types as tt on ti.TIType = tt.TIType\r\njoin dbo.Dict_Areas as areas on ti.ATSArea_ID = areas.ATSArea_ID\r\njoin dbo.Dict_AIS as ais on ti.ATSAIS_ID = ais.ATSAIS_ID\r\nleft join dbo.MGLEP_TI_COUNTRIES as cc on ti.TI_ID = cc.TI_ID\r\nleft join dbo.MGLEP_SPR_COUNTRIES as c on cc.COUNTRY_ID = c.ID\r\njoin dbo.v_Dict_Hier as h on ps.HierLev3_ID = h.HierLev3_ID")]
     public void MsQueryBuilder_One_Build(string expected)
     {
-        Action<IMsQueryBuilder> builder = b => b
+        Action<IQueryBuilder> builder = b => b
         .Select<Info_TI_Hist>(x =>
         {
             x.All();
@@ -65,7 +65,7 @@ public class MsQueryBuilderTests
         .Join<Dict_PS, v_Dict_Hier>(x => x.EqualTo(x => x.HierLev3_ID, x => x.HierLev3_ID));
 
 
-        builder(QBCore.Make<MsQueryBuilder>(out QueryBuilderContext context));
+        builder(QBCore.Make<QueryBuilder>(out QBContext context));
 
         Assert.Equal(expected, context.Query.ToString());
     }
@@ -389,7 +389,7 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
 		DateTime from = DateTime.Now, to = DateTime.Now;
 		var str = string.Empty;
 
-        Action<IMsQueryBuilder> builder = b => b
+        Action<IQueryBuilder> builder = b => b
 		.Select<Sub_dc_ec>(x =>
 		{
 			x.All();
@@ -467,7 +467,7 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
 
 
 
-        builder(QBCore.Make<MsQueryBuilder>(out QueryBuilderContext context));
+        builder(QBCore.Make<QueryBuilder>(out QBContext context));
 
         Assert.Equal(expected, context.Query.ToString());
     }

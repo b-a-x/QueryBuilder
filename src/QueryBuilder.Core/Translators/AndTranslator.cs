@@ -1,10 +1,10 @@
-﻿using QueryBuilder.Core.Queries;
+﻿using QueryBuilder.Core.Context;
 
 namespace QueryBuilder.Core.Translators;
 
 public readonly ref struct AndTranslator
 {
-    public void Run(QueryBuilderContext source)
+    public void Run(QBContext source)
     {
         source.Query.Append(" and ");
     }

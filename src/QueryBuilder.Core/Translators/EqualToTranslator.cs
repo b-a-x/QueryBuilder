@@ -1,5 +1,5 @@
-﻿using QueryBuilder.Core.Helpers;
-using QueryBuilder.Core.Queries;
+﻿using QueryBuilder.Core.Context;
+using QueryBuilder.Core.Entity;
 
 namespace QueryBuilder.Core.Translators;
 
@@ -17,7 +17,7 @@ public readonly ref struct EqualToTranslator
         _table = table;
     }
 
-    public void Run(QueryBuilderContext source)
+    public void Run(QBContext source)
     {
         source.Parameters.Add(_value, out string name);
         source.Query.Append(_table.Alias).Append(".").Append(_column).Append(" = @").Append(name);
@@ -38,7 +38,7 @@ public readonly ref struct EqualTranslator
         _tableRigth = tableRigth;
     }
 
-    public void Run(QueryBuilderContext source)
+    public void Run(QBContext source)
     {
         source.Query.Append(_tableLeft.Alias).Append(".").Append(_columnLeft).Append(" = ").Append(_tableRigth.Alias).Append(".").Append(_columnRigth);
     }

@@ -1,4 +1,4 @@
-﻿namespace QueryBuilder.Core.Helpers;
+﻿namespace QueryBuilder.Core.Entity;
 
 public interface IHasTable
 {

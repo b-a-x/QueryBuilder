@@ -1,4 +1,4 @@
-﻿using QueryBuilder.Core.Queries;
+﻿using QueryBuilder.Core.Context;
 
 namespace QueryBuilder.Ms.Translators;
 
@@ -10,7 +10,7 @@ public readonly ref struct AsTranslator
         _value = value;
     }
 
-    public void Run(QueryBuilderContext source)
+    public void Run(QBContext source)
     {
         source.Query.Append("as ").Append(_value).Append(" ");
     }

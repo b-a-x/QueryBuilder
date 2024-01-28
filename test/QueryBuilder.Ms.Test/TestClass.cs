@@ -1,4 +1,4 @@
-﻿using QueryBuilder.Core.Helpers;
+﻿using QueryBuilder.Core.Entity;
 
 namespace QueryBuilder.Ms.Test;
 
