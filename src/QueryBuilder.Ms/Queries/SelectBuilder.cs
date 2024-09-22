@@ -17,6 +17,7 @@ public interface ISelectBuilder<T>
     ISelectBuilder<T> Column(string column);
     ISelectBuilder<T> As(string value);
     ISelectBuilder<T> IsNullFunc<TField>([NotNull] Expression<Func<T, TField>> column, TField value);
+    ISelectBuilder<T> Case(Action<ICaseBuilder<T>> inner);
 }
 
 public class SelectBuilder<T> : QBCore, ISelectBuilder<T>
@@ -55,6 +56,12 @@ public class SelectBuilder<T> : QBCore, ISelectBuilder<T>
     {
         new CommaSelectTranslator().Run(context);
         new IsNullFuncTranslator(CommonExpression.GetColumnName(column), value, T.GetTable()).Run(context);
+        return this;
+    }
+
+    public ISelectBuilder<T> Case(Action<ICaseBuilder<T>> inner)
+    {
+        QBCore.Make<CaseBuilder<T>>(context: context, inner: inner);
         return this;
     }
 }
