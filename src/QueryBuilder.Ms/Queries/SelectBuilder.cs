@@ -13,10 +13,12 @@ public interface ISelectBuilder<T>
 {
     ISelectBuilder<TDto> Bind<TDto>() where TDto : IHasTable;
     ISelectBuilder<T> All();
-    ISelectBuilder<T> Column<TField>([NotNull] Expression<Func<T, TField>> column);
-    ISelectBuilder<T> Column(string column);
+    ISelectBuilder<T> Column<TField>([NotNull] Expression<Func<T, TField>> column, bool isComma = true);
+    ISelectBuilder<T> Column(string column, bool isComma = true);
     ISelectBuilder<T> As(string value);
     ISelectBuilder<T> IsNullFunc<TField>([NotNull] Expression<Func<T, TField>> column, TField value);
+    ISelectBuilder<T> IsNull();
+    ISelectBuilder<T> Case(Action<ICaseBuilder<T>> builder);
 }
 
 public class SelectBuilder<T> : QBCore, ISelectBuilder<T>
@@ -35,15 +37,15 @@ public class SelectBuilder<T> : QBCore, ISelectBuilder<T>
         return this;
     }
 
-    public ISelectBuilder<T> Column<TField>([NotNull] Expression<Func<T, TField>> column)
+    public ISelectBuilder<T> Column<TField>([NotNull] Expression<Func<T, TField>> column, bool isComma = true)
     {
-        Column(CommonExpression.GetColumnName(column));
+        Column(CommonExpression.GetColumnName(column), isComma);
         return this;
     }
 
-    public ISelectBuilder<T> Column(string column)
+    public ISelectBuilder<T> Column(string column, bool isComma = true)
     {
-        new CommaSelectTranslator().Run(context);
+        if(isComma) new CommaSelectTranslator().Run(context);
         new ColumnTranslator(column, T.GetTable()).Run(context);
         return this;
     }
@@ -55,6 +57,19 @@ public class SelectBuilder<T> : QBCore, ISelectBuilder<T>
     {
         new CommaSelectTranslator().Run(context);
         new IsNullFuncTranslator(CommonExpression.GetColumnName(column), value, T.GetTable()).Run(context);
+        return this;
+    }
+
+    public ISelectBuilder<T> Case(Action<ICaseBuilder<T>> builder)
+    {
+        new CommaSelectTranslator().Run(context);
+        Make<CaseBuilder<T>>(context).Case(builder);
+        return this;
+    }
+
+    public ISelectBuilder<T> IsNull()
+    {
+        new IsNullTranslator().Run(context);
         return this;
     }
 }

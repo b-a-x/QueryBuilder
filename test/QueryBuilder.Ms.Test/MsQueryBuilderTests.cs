@@ -422,18 +422,19 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
 									x.Bind<Dict_ConsumerContract_Type>()
 									 .Column(x => x.ConsumerContract_Type_ID)
 									 .Column(x => x.ConsumerContract_Type_Name);
-									x.Bind<Dict_ConsumerContract_SAP_Hist>()
+									var csap = x.Bind<Dict_ConsumerContract_SAP_Hist>()
 									 .Column(x => x.ContractStatus).As("ConsumerContract_SAP_Status")
 									 .IsNullFunc(x => x.SAP_ID, str).As("SAP_ID")
 									 .Column(x => x.EDF);
 									x.Bind<Dict_ConsumerContract_SAP>()
 									 .Column(x => x.NSIQualityStatus).As("ConsumerContract_SAP_NSIQualityStatus")
 									 .Column(x => x.MRid).As("ConsumerContract_MRid");
+									x.Case(x => x.When(() => csap.Column(x => x.SAP_ID, false).IsNull())
+									                             .Then(0)
+																 .Else(1))
+									 .As("HasSAP_ID");
                                     /*
-									 ,(case
-			when csap.SAP_ID is null then 0
-			else 1
-		end) as HasSAP_ID
+									 , case when csap.ContractStatus = 40 then 1 when csap.ContractStatus is null and dc1.FinishDate >= @FinishDate then 1 else 0 end as IsActive
 									 */
                                 })
 								.From()
