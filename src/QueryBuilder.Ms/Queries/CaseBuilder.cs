@@ -33,7 +33,7 @@ public class CaseBuilder<TDto> : QBCore, ICaseBuilder<TDto>
     }
 
     public ICaseBuilder<TDto> Then(Action action)
-    {
+{
         new ThenTranslator().Run(context);
         action?.Invoke();
         return this;
@@ -44,7 +44,7 @@ public class CaseBuilder<TDto> : QBCore, ICaseBuilder<TDto>
         new ElseTranslator().Run(context);
         action?.Invoke();
         return this;
-    }
+}
 
     public ICaseBuilder<TDto> Then<T>(T value)
     {
@@ -54,7 +54,7 @@ public class CaseBuilder<TDto> : QBCore, ICaseBuilder<TDto>
     }
 
     public ICaseBuilder<TDto> Else<T>(T value)
-    {
+{
         new ElseTranslator().Run(context);
         context.Query.Append(value.ToString());
         return this;

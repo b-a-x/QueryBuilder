@@ -18,6 +18,12 @@ public interface IWhereBuilder<T>
     IWhereBuilder<T> LessEqualTo<TField>([NotNull] Expression<Func<T, TField>> column, TField value);
     IWhereBuilder<T> And();
     IWhereBuilder<T> Or();
+
+    /// <summary>
+    /// Синтаксис ( ... )
+    /// </summary>
+    /// <param name="inner"></param>
+    /// <returns></returns>
     IWhereBuilder<T> Bracket(Action inner);
     IWhereBuilder<T> IsNull();
     IWhereBuilder<T> IsNull<TField>([NotNull] Expression<Func<T, TField>> column);
