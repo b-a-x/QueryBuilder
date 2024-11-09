@@ -2,13 +2,14 @@
 using QueryBuilder.Core.Entity;
 using QueryBuilder.Core.Helpers;
 using QueryBuilder.Core.Translators;
+using QueryBuilder.Ms.Syntax;
 using QueryBuilder.Ms.Translators;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
 namespace QueryBuilder.Ms.Queries;
 
-public interface ISelectBuilder<T>
+public interface ISelectBuilder<T> : IsNullBuilder<T, ISelectBuilder<T>>
     where T : IHasTable
 {
     ISelectBuilder<TDto> Bind<TDto>() where TDto : IHasTable;
@@ -17,7 +18,6 @@ public interface ISelectBuilder<T>
     ISelectBuilder<T> Column(string column, bool isComma = true);
     ISelectBuilder<T> As(string value);
     ISelectBuilder<T> IsNullFunc<TField>([NotNull] Expression<Func<T, TField>> column, TField value);
-    ISelectBuilder<T> IsNull();
     ISelectBuilder<T> Case(Action<ICaseBuilder<T>> builder);
 }
 
@@ -69,7 +69,21 @@ public class SelectBuilder<T> : QBCore, ISelectBuilder<T>
 
     public ISelectBuilder<T> IsNull()
     {
-        new IsNullTranslator().Run(context);
+        ((IsNull)this).IsNull(context);
+        return this;
+    }
+
+    public ISelectBuilder<T> IsNull<TField>([NotNull] Expression<Func<T, TField>> column)
+    {
+        Column(column, false);
+        IsNull();
+        return this;
+    }
+
+    public ISelectBuilder<T> IsNull([NotNull] string column)
+    {
+        Column(column, false);
+        IsNull();
         return this;
     }
 }

@@ -429,7 +429,7 @@ where dc1.FinishDate >= @startDate and ec.ConsumerContract_ID is null
 									x.Bind<Dict_ConsumerContract_SAP>()
 									 .Column(x => x.NSIQualityStatus).As("ConsumerContract_SAP_NSIQualityStatus")
 									 .Column(x => x.MRid).As("ConsumerContract_MRid");
-									x.Case(x => x.When(() => csap.Column(x => x.SAP_ID, false).IsNull())
+									x.Case(x => x.When(() => csap.IsNull(x =>x.SAP_ID))
 									                             .Then(0)
 																 .Else(1))
 									 .As("HasSAP_ID");

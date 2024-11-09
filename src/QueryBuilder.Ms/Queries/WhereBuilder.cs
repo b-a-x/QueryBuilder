@@ -5,10 +5,11 @@ using QueryBuilder.Core.Entity;
 using QueryBuilder.Ms.Translators;
 using QueryBuilder.Core.Context;
 using QueryBuilder.Core.Helpers;
+using QueryBuilder.Ms.Syntax;
 
 namespace QueryBuilder.Ms.Queries;
 
-public interface IWhereBuilder<T>
+public interface IWhereBuilder<T> : IsNullBuilder<T, IWhereBuilder<T>>
     where T : IHasTable
 {
     IWhereBuilder<TDto> Bind<TDto>() where TDto : IHasTable;
@@ -20,13 +21,11 @@ public interface IWhereBuilder<T>
     IWhereBuilder<T> Or();
 
     /// <summary>
-    /// Синтаксис ( ... )
+    /// syntax: ( ... )
     /// </summary>
     /// <param name="inner"></param>
     /// <returns></returns>
     IWhereBuilder<T> Bracket(Action inner);
-    IWhereBuilder<T> IsNull();
-    IWhereBuilder<T> IsNull<TField>([NotNull] Expression<Func<T, TField>> column);
     IWhereBuilder<T> IsNotNull();
     IWhereBuilder<T> IsNotNull<TField>([NotNull] Expression<Func<T, TField>> column);
 }
@@ -79,14 +78,14 @@ public class WhereBuilder<T> : QBCore, IWhereBuilder<T>
 
     public IWhereBuilder<T> IsNull()
     {
-        new IsNullTranslator().Run(context);
+        ((IsNull)this).IsNull(context);
         return this;
     }
 
     public IWhereBuilder<T> IsNull<TField>([NotNull] Expression<Func<T, TField>> column)
     {
         Column(column);
-        new IsNullTranslator().Run(context);
+        IsNull();
         return this;
     }
 
@@ -105,7 +104,20 @@ public class WhereBuilder<T> : QBCore, IWhereBuilder<T>
 
     public IWhereBuilder<T> Column<TField>([NotNull] Expression<Func<T, TField>> column)
     {
-        new ColumnTranslator(CommonExpression.GetColumnName(column), T.GetTable()).Run(context);
+        Column(CommonExpression.GetColumnName(column));
+        return this;
+    }
+
+    public IWhereBuilder<T> Column(string column)
+    {
+        new ColumnTranslator(column, T.GetTable()).Run(context);
+        return this;
+    }
+
+    public IWhereBuilder<T> IsNull([NotNull] string column)
+    {
+        Column(column);
+        IsNull();
         return this;
     }
 }
