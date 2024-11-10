@@ -2,7 +2,7 @@
 
 public class QBCore
 {
-    protected QBContext? context { get; set; }
+    protected QBContext context { get; set; }
 
     public static TResult Make<TResult>(out QBContext context, Action<TResult>? inner = null)
         where TResult : QBCore, new()
@@ -11,7 +11,7 @@ public class QBCore
         return Make(context, inner);
     }
 
-    public static TResult Make<TResult>(QBContext? context, Action<TResult>? inner = null)
+    public static TResult Make<TResult>(QBContext context, Action<TResult>? inner = null)
         where TResult : QBCore, new()
     {
         var result = new TResult

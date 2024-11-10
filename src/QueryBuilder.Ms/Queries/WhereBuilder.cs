@@ -78,7 +78,7 @@ public class WhereBuilder<T> : QBCore, IWhereBuilder<T>
 
     public IWhereBuilder<T> IsNull()
     {
-        ((IsNull)this).IsNull(context);
+        new IsNullTranslator().Run(context);
         return this;
     }
 

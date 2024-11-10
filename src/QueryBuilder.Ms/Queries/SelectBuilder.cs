@@ -69,7 +69,7 @@ public class SelectBuilder<T> : QBCore, ISelectBuilder<T>
 
     public ISelectBuilder<T> IsNull()
     {
-        ((IsNull)this).IsNull(context);
+        new IsNullTranslator().Run(context);
         return this;
     }
 
